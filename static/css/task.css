@@ -1,0 +1,117 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+/* 容器样式 */
+.container {
+    /* width: 1920px; */
+    /* height: 1080px; */
+    margin-top: 30px;
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 95%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+.header, .header h, .header p {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    /* margin: 0 30px; */
+}
+/* SVG容器样式 */
+.svg-container {
+    flex: 3;
+    max-width: 75%;
+    padding: 10px;
+    box-sizing: border-box;
+    border-right: #838383 solid 2px;
+    max-height: 90vh;
+    overflow: auto;
+}
+/* 表单容器样式 */
+.form-container {
+    flex: 1;
+    max-width: 20%;
+    padding: 20px;
+    box-sizing: border-box;
+    align-self: start;
+}
+.q-container {
+    margin: 10px 0;
+    border-top: 2px solid #4d4d4d;
+    border-left: none;
+    border-right: none;
+    padding: 10px;
+}
+#q2-container {
+    display: none;
+}
+form .hint {
+    margin: 10px 0 30px 0;
+    font-size: medium;
+    color: #6d6d6d;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    color: #2b2b2b;
+}
+form label {
+    margin-bottom: 5px;
+    font-size: larger;
+}
+form p {
+    margin-top: 20px;
+    font-size: large;
+}
+
+form input[type="text"],
+form input[type="number"] {
+    font-size: large;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form input[type="submit"] {
+    font-size: large;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+    background-color: #45a049;
+    
+}
+
+.svg-container ul {
+    padding-inline: 10px;
+    display: flow-root;
+    justify-content: center;
+}
+
+.svg-container li {
+    float:inline-start;
+    display: inline-flexbox;
+    list-style-type: none;
+}
+
+.svg-container svg {
+    margin: 10px;
+    width: 410px;
+    height: 410px;
+    border-style: solid;
+}

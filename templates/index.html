@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Study - Dynamic Graph Layout Algorithm</title>
+    <link rel="stylesheet" href="../static/css/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>欢迎参与动态图布局算法用户调研！</h1>
+        </div>
+        <div class="content">
+            <div class="description">
+                <p>
+                    <b>任务描述</b>：
+                    本用户调研包含两类动态图分析任务，分别为“节点XXX”与“聚类XXX”，分别包含XXX与XXX个任务
+                    对于每一个任务，您需要阅读提示内容以及可视图标，并完成作答。
+                </p>
+                <p>
+                    <b>注意事项</b>：
+                    当编辑好合适的答案后，点击<input type="button" value="下一个">，将进行下一个任务的作答，且<b>无法撤销</b>。
+                    点击 <input type="button" value="开始作答"> 后，您的回答<b>将被计时</b>。请仔细阅读每个任务，并尽快作答。</p>
+                </p>
+            </div>
+            <div class="form">
+                <form id="welcomeForm" method="post" action="/start">
+                    <label for="name">姓名：</label>
+                    <input type="text" id="name" name="name" required>
+
+                    <label for="gender">性别：</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">请选择</option>
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                        <option value="other">其他</option>
+                    </select>
+
+                    <label for="age">年龄：</label>
+                    <input type="number" id="age" name="age" required>
+
+                    <input type="submit" value="开始作答" >
+                </form>
+            </div>
+        </div>
+        <div class="attention">
+            <p>声明：隐私信息XXX</p>
+        </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</html>

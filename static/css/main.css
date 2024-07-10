@@ -1,0 +1,94 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+}
+.container {
+    width: 1280px;
+    height: auto;
+    margin: auto;
+    /* border: 3px solid #6e6e6e; */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+}
+.header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}
+.header h1 {
+    margin-top: 60px;
+}
+.content {
+    display: flex;
+    flex-direction: row; 
+    justify-content: center; 
+    align-items: center; 
+    width: 100%;
+    max-width: 90%; 
+    margin: 10px 0px; 
+    font-size: large;
+}
+.attention {
+    margin-top: 20px;
+    color: #5b5b5b
+}
+.description, .form {
+    flex: 1; /* 两栏平分空间 */
+    margin: 10px 40px;
+}
+.description p {
+    max-width: 100%;
+    text-align: justify;
+    word-break: break-word;
+    color: #474747;
+    text-indent: 2em;
+    line-height: 2em;
+}
+
+.form form {
+    /* margin-top: 20px; */
+    display: flex;
+    flex-direction: column;
+}
+.form label {
+    margin-bottom: 5px;
+    color: #2c2c2c;
+}
+.form input[type="text"],
+.form input[type="number"],
+.form select {
+    font-size: large;
+    max-width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.form input[type="submit"] , .description input[type="button"]{
+    font-size: large;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+.description input[type="button"] {
+    margin: 20px 3px;
+    cursor: default;
+}
+.form input[type="submit"]:hover {
+    background-color: #45a049;
+}

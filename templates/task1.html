@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Task1</title>
+    <link rel="stylesheet" href="../static/css/task.css">
+</head>
+<body>
+
+    <div class="container">
+    
+        <!-- SVG容器 -->
+        <div class="svg-container">
+            <ul id="slices">
+            </ul>
+        </div>
+        <!-- 表单容器 -->
+        <div class="form-container">
+            <div class="header">
+                <h1 style="margin-right: 20px;">Task:</h1>
+                <h1 id="current_task">NaN</h1>
+                <h1>/</h1>
+                <h1 id="total_task">NaN</h1>
+            </div>
+            <div class="header">
+                <p style="margin-right: 20px;">UID:</p>
+                <p id="current_uid">NaN</p>
+            </div>
+            <form action="/next-task" method="post">
+                <div class="q-container">
+
+                    <p>1. 在给定的高亮时间片中，观察两个高亮节点，判断他们之间的连接关系的变化，在以下三个选项中选择一个：</p>
+                    
+                    <div id="r-group" style="margin-bottom: 20px;">
+                        <div style="margin-top: 10px;">
+                            <input type="radio" id="radio-increase" name="answer" value="increase" required />
+                            <label for="radio-increase">增强</label>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <input type="radio" id="radio-decrease" name="answer" value="decrease" />
+                            <label for="radio-decrease">渐弱</label>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <input type="radio" id="radio-none" name="answer" value="none" />
+                            <label for="radio-none">不变</label>
+                        </div>
+                    </div>
+
+                    <p class="hint">提示：可使用光标进行节点Hover，查看其一阶邻边</p>
+
+                </div>
+                
+                <div id="q2-container" class="q-container">
+
+                    <p>2. 请给出你认为的变化比例：</p>
+                    
+                    <input type="number" name="q2" id="q2-number" min=0 max=100 required>
+                    <p class="hint">范围：(0~100]</p>
+
+                </div>
+
+                <input type="submit" value="下一个">
+            </form>
+        </div>
+
+    </div>
+</body>
+<script src="../static/js/d3.v7.min.js", type=""></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../static/js/vis.js"></script>
+<script src="../static/js/task.js"></script>
+</html>
