@@ -1,28 +1,32 @@
 body, html {
-    margin: 0;
+    height: 100%;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    /* flex-direction: column; */
 }
 /* 容器样式 */
 .container {
     /* width: 1920px; */
     /* height: 1080px; */
-    margin-top: 30px;
     flex-direction: row;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 95%;
+    width: 98%;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+.container [highlight] {
+    color: #ff7a7a;
+    font-weight: bold;
 }
 .header, .header h, .header p {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    color: #575757;
     /* margin: 0 30px; */
 }
 /* SVG容器样式 */
@@ -32,13 +36,14 @@ body, html {
     padding: 10px;
     box-sizing: border-box;
     border-right: #838383 solid 2px;
-    max-height: 90vh;
+    max-height: 96vh;
     overflow: auto;
 }
 /* 表单容器样式 */
 .form-container {
     flex: 1;
     max-width: 20%;
+    min-width: 280px;
     padding: 20px;
     box-sizing: border-box;
     align-self: start;
@@ -104,14 +109,25 @@ form input[type="submit"]:hover {
 }
 
 .svg-container li {
-    float:inline-start;
-    display: inline-flexbox;
+    float: inline-start;
     list-style-type: none;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .svg-container svg {
-    margin: 10px;
-    width: 410px;
-    height: 410px;
+    box-sizing: border-box;
+    margin: 3px;
+    width: 400px;
+    height: 400px;
+    border-width: 1px;
     border-style: solid;
+    padding: 0px;
+}
+
+.svg-container svg[highlight] {
+    border-width: 2px;
 }

@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>Task1</title>
+    <title>Task</title>
     <link rel="stylesheet" href="../static/css/task.css">
 </head>
 <body>
@@ -17,19 +17,17 @@
         <!-- 表单容器 -->
         <div class="form-container">
             <div class="header">
-                <h1 style="margin-right: 20px;">Task:</h1>
-                <h1 id="current_task">NaN</h1>
-                <h1>/</h1>
-                <h1 id="total_task">NaN</h1>
+                <h1 style="margin-right: 20px;">任务</h1>
+                <h1 id="current_task">-</h1>
             </div>
             <div class="header">
-                <p style="margin-right: 20px;">UID:</p>
-                <p id="current_uid">NaN</p>
+                <p style="margin-right: 20px;">用户ID</p>
+                <p id="current_uid">-</p>
             </div>
             <form action="/next-task" method="post">
                 <div class="q-container">
 
-                    <p>1. 在给定的高亮时间片中，观察两个高亮节点，判断他们之间的连接关系的变化，在以下三个选项中选择一个：</p>
+                    <p>1. 在给定的<span highlight>高亮</span>时间片中，观察两个<span highlight>高亮</span>节点，判断他们之间的连接关系的变化，在以下三个选项中选择一个：</p>
                     
                     <div id="r-group" style="margin-bottom: 20px;">
                         <div style="margin-top: 10px;">
@@ -46,16 +44,15 @@
                         </div>
                     </div>
 
-                    <p class="hint">提示：可使用光标进行节点Hover，查看其一阶邻边</p>
-
                 </div>
                 
                 <div id="q2-container" class="q-container">
 
                     <p>2. 请给出你认为的变化比例：</p>
                     
-                    <input type="number" name="q2" id="q2-number" min=0 max=100 required>
-                    <p class="hint">范围：(0~100]</p>
+                    <input type="number" name="q2" id="q2-number" value="" min=1 max=100 required>
+                    <label for="q2-number">%</label>
+                    <p class="hint">范围：(0, 500]</p>
 
                 </div>
 

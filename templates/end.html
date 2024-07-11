@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <title>User Study - Dynamic Graph Layout Algorithm</title>
@@ -8,13 +8,20 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>任务全部完成！</h1>
+            <h1>任务全部完成，感谢您的参与！</h1>
         </div>
 
         <div class="content">
-            <p>本次任务总耗时：</p>
-            <p id="time-value" style="margin: 0px 10px;">600</p>
-            <p>秒，感谢您的参与！</p>
+            <p>本次任务总耗时</p>
+            <p id="time-value-minute" style="margin: 0px 10px;" highlight>-</p>
+            <p>分</p>
+            <p id="time-value-second" style="margin: 0px 10px;" highlight>-</p>
+            <p>秒</p>
+        </div>
+        <div class="content">
+            <p>截止目前已有</p>
+            <p id="users-value" style="margin: 0px 10px;" highlight>-</p>
+            <p>人完成了用户调研</p>
         </div>
         
         <div class="attention">
@@ -23,4 +30,37 @@
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $( document ).ready(function() {
+        $.ajax({
+            url: "/get-endinfo",
+            type: "GET",
+            success: function(data) {
+                $({ timeNum_min: 0, timeNum_sec: 0, usersNum: 0 }).animate(
+                    { 
+                        timeNum_min: Math.floor(data.finish_time / 60),
+                        timeNum_sec: Math.floor(data.finish_time % 60),
+                        usersNum: data.finished_users_count
+                    },
+                    {
+                        duration: 800,
+                        step: function () {
+                            $('#time-value-minute').text(Math.floor(this.timeNum_min));
+                            $('#time-value-second').text(Math.floor(this.timeNum_sec));
+                            $('#users-value').text(Math.floor(this.usersNum));
+                        },
+                        complete: function () {
+                            $('#time-value-minute').text(this.timeNum_min);
+                            $('#time-value-second').text(this.timeNum_sec);
+                            $('#users-value').text(this.usersNum);
+                        }
+                    });
+            }, 
+            error: function(xhr, status, error) {
+                console.log("Error: " + xhr.responseJSON.error);
+                $("#time-value").text("-")
+            }
+        })
+    })
+</script>
 </html>

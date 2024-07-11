@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oops!</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+        .oops {
+            font-size: 72px;
+        }
+    </style>
+</head>
+<body>
+    <div class="oops">
+        Oops!
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        let url_params = new URLSearchParams(window.location.search);
+        let error_str = url_params.get('error');
+        if (error_str == null) 
+            error_str = "Unknown error"
+        alert(`非常抱歉！服务器发生了错误，请联系我们并重新开始测试。\n详细信息: ${error_str}`);
+        window.location.href = "/";
+    });
+</script>
+</html>

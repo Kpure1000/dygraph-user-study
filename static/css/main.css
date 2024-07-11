@@ -39,6 +39,9 @@ body, html {
     margin: 10px 0px; 
     font-size: large;
 }
+.content [highlight] {
+    color: #479523;
+}
 .attention {
     margin-top: 20px;
     color: #5b5b5b
@@ -52,7 +55,7 @@ body, html {
     text-align: justify;
     word-break: break-word;
     color: #474747;
-    text-indent: 2em;
+    /* text-indent: 2em; */
     line-height: 2em;
 }
 

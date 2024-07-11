@@ -10,6 +10,7 @@ task2_name = "task2"
 
 class Task:
     def __init__(self, name):
+        print("Task Init")
         root_path = f"data/{name}"
         method_folders = glob.glob(root_path + "/*")
         self.tasks = {}
@@ -52,64 +53,108 @@ __task2__ = Task2()
 
 class TaskManager:
     def __init__(self, db:Database, id:int):
-        self.db = db
-        self.id = id
-        task1_list = __task1__.get_data_list()
-        self.__len_task1 = len(task1_list)
-
-        status, res, _ = self.db.exec(f'select task from tasks where id = {id}')
-        if status != None:
-            logger.error(f"Failed to get task, info: {status}")
-            raise Exception(f"Failed to get task, info: {status}")
-        if len(res) != 0:
-            self.data_list = json.loads(res[0][0])
-        else:
-            # TODO Latin square
-            self.data_list = task1_list + __task2__.get_data_list()
-            status, res, _ = self.db.exec(f"insert into tasks (id, task, current) values ({id}, '{json.dumps(self.data_list)}', 0)")    
-            if status != None:
-                logger.error(f"Failed to insert task, info: {status}")
-                raise Exception(f"Failed to insert task, info: {status}")
         
-        self.total_len = len(self.data_list)
+        try:
+            self.db = db
+            self.id = id
+            
+            task1_list = __task1__.get_data_list()
+            task2_list = __task2__.get_data_list()
+            
+            self.__len_task1 = len(task1_list)
+            self.__len_task2 = len(task2_list)
 
+            self.total_len = self.__len_task1 + self.__len_task2
+            self.__cur_idx__ = 0
+            self.data_list = []
+
+            # find if exist
+            status, res, _ = self.db.exec(f'select task, current from tasks where id = {id}')
+            if status != None:
+                logger.error(f"Failed to get task for {self.id}, info: {status}")
+                raise Exception(f"Failed to get task for {self.id}, info: {status}")
+            if len(res) != 0: # exist
+                # load
+                self.data_list = json.loads(res[0][0])
+                self.__cur_idx__ = res[0][1]
+            else: # not exist
+
+                # TODO Latin square
+
+                self.data_list = task1_list + __task2__.get_data_list()
+
+                # save
+                status, res, _ = self.db.exec(f"insert into tasks (id, task, current) values ({id}, '{json.dumps(self.data_list)}', {self.__cur_idx__})")    
+                if status != None:
+                    logger.error(f"Failed to insert task, info: {status}")
+                    raise Exception(f"Failed to insert task, info: {status}")
+                
+        except Exception as e:
+            logger.error(f"Failed to init task manager for {self.id}, info: {e}")
+            raise Exception(f"Failed to init task manager for {self.id}, info: {traceback.format_exc()}")
+        
+    def current_task_num(self):
+        try:
+            status, res, _ = self.db.exec(f'select current from tasks where id = {self.id}')
+            if status != None:
+                logger.error(f"Failed to get current number for {self.id}, info: {status}")
+                traceback.print_exc()
+                return None
+            return int(res[0][0])
+        except Exception as e:
+            logger.error(f"Failed to get current number for {self.id}, info: {traceback.format_exc()}")
+            raise Exception(f"Failed to get current number for {self.id}, info: {traceback.format_exc()}")
+        
+    def is_final_task(self):
+        try:
+            return self.__cur_idx__ == self.total_len - 1
+        except Exception as e:
+            logger.error(f"Failed to check final task for {self.id}, info: {traceback.format_exc()}")
+            raise Exception(f"Failed to check final task for {self.id}, info: {traceback.format_exc()}")
 
     def next(self):
-        cur = self.current()
-        if cur >= self.total_len - 1:
-            return False
-        cur += 1
-        status, res, _ = self.db.exec(f"update tasks set current = {cur} where id = {self.id}")
-        if status != None:
-            logger.error(f"Failed to update current number, info: {status}")
-            traceback.print_exc()
-            return False
-        return True
+        try:
+            if self.__cur_idx__ >= self.total_len - 1:
+                return False
+            self.__cur_idx__ += 1
+            status, _, _ = self.db.exec(f"update tasks set current = {self.__cur_idx__} where id = {self.id}")
+            if status != None:
+                logger.error(f"Failed to update current number, info: {status}")
+                traceback.print_exc()
+                return False
+            return True
+        except Exception as e:
+            logger.error(f"Failed to set next task for {self.id}, info: {traceback.format_exc()}")
+            raise Exception(f"Failed to set next task for {self.id}, info: {traceback.format_exc()}")
     
-    def current(self):
-        status, res, _ = self.db.exec(f'select current from tasks where id = {self.id}')
-        if status != None:
-            logger.error(f"Failed to get current number, info: {status}")
-            traceback.print_exc()
-            return None
-        return int(res[0][0])
-        
     def current_data(self):
-        cur = self.current()
-        if cur < self.__len_task1:
-            return __task1__.get_data(self.data_list[cur]["method"], self.data_list[cur]["dataset"])
-        elif cur < self.total_len:
-            return __task2__.get_data(self.data_list[cur]["method"], self.data_list[cur]["dataset"])
-        else:
-            return None
+        try:
+            cur = self.__cur_idx__
+            if cur < self.__len_task1:
+                return __task1__.get_data(self.data_list[cur]["method"], self.data_list[cur]["dataset"])
+            elif cur < self.total_len:
+                return __task2__.get_data(self.data_list[cur]["method"], self.data_list[cur]["dataset"])
+            else:
+                return None
+        except Exception as e:
+            logger.error(f"Failed to get current data for {self.id}, info: {traceback.format_exc()}")
+            raise Exception(f"Failed to get current data for {self.id}, info: {traceback.format_exc()}")
     
     def current_task(self):
-        cur = self.current()
-        if cur < self.__len_task1:
-            return 1
-        else:
-            return 2
+        try:
+            cur = self.__cur_idx__
+            if cur < self.__len_task1:
+                return 1
+            else:
+                return 2
+        except Exception as e:
+            logger.error(f"Failed to get current task for {self.id}, info: {traceback.format_exc()}")
+            raise Exception(f"Failed to get current task for {self.id}, info: {traceback.format_exc()}")
 
     def current_task_info(self):
-        cur = self.current()
-        return self.data_list[cur]["method"], self.data_list[cur]["dataset"]
+        try:
+            cur = self.__cur_idx__
+            return self.data_list[cur]["method"], self.data_list[cur]["dataset"]
+        except Exception as e:
+            logger.error(f"Failed to get current task info for {self.id}, info: {traceback.format_exc()}")
+            raise Exception(f"Failed to get current task info for {self.id}, info: {traceback.format_exc()}")

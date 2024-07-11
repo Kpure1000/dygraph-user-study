@@ -3,13 +3,19 @@ import traceback
 from database import Database
 from utils import logger
 from task import TaskManager
+from results import ResultsManager
 
 class UserManager:
 
     def __init__(self, db: Database):
-        self.db = db
-        self.users = {}
-        self.lock = threading.Lock()
+        try:
+            self.db = db
+            self.taskManagers = {}
+            self.resultsManager = ResultsManager(db)
+            self.lock = threading.Lock()
+        except Exception as e:
+            logger.error(f"Error initializing user manager: {traceback.format_exc()}")
+            raise Exception(f"Error initializing user manager: {traceback.format_exc()}")
 
     def add(self, name, gender, age):
         try:
@@ -18,7 +24,7 @@ class UserManager:
             if status != None:
                 return None, status
             id = lastrowid
-            self.users[id] = TaskManager(self.db, id)
+            self.taskManagers[id] = TaskManager(self.db, id)
         except Exception as e:
             logger.error(f"Error adding user: {e}")
             traceback.print_exc()
@@ -28,7 +34,14 @@ class UserManager:
         return id, status
     
     def get_task_manager(self, id) -> TaskManager:
-        if id in self.users:
-            return self.users[id]
-        else:
+        try:
+            if self.resultsManager.is_saved(id):
+                logger.info(f"User {id} has already saved results")
+                raise Exception(f"User {id} has already saved results")
+            if id not in self.taskManagers:
+                self.taskManagers[id] = TaskManager(self.db, id)
+            return self.taskManagers[id]
+        except Exception as e:
+            logger.error(f"Error getting task manager for id {id}, info: {e}")
+            traceback.print_exc()
             return None
