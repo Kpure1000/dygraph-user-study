@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Task</title>
     <link rel="stylesheet" href="../static/css/task.css">
+    <link rel="stylesheet" href="../static/css/vis.css">
 </head>
 <body>
 
@@ -36,7 +37,7 @@
                         </div>
                         <div style="margin-top: 10px;">
                             <input type="radio" id="radio-decrease" name="answer" value="decrease" />
-                            <label for="radio-decrease">渐弱</label>
+                            <label for="radio-decrease">减弱</label>
                         </div>
                         <div style="margin-top: 10px;">
                             <input type="radio" id="radio-none" name="answer" value="none" />
@@ -50,7 +51,7 @@
 
                     <p>2. 请给出你认为的变化比例：</p>
                     
-                    <input type="number" name="q2" id="q2-number" value="" min=1 max=100 required>
+                    <input type="number" name="q2" id="q2-number" value="" min=1 max=100 oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                     <label for="q2-number">%</label>
                     <p class="hint">范围：(0, 500]</p>
 

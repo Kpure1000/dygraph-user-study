@@ -37,7 +37,7 @@
                     </select>
 
                     <label for="age">年龄：</label>
-                    <input type="number" id="age" name="age" required>
+                    <input type="number" id="age" name="age" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required >
 
                     <input type="submit" value="开始作答" >
                 </form>

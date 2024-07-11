@@ -18,7 +18,7 @@ body, html {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 .container [highlight] {
-    color: #ff7a7a;
+    color: #ff4f4f;
     font-weight: bold;
 }
 .header, .header h, .header p {
@@ -36,7 +36,7 @@ body, html {
     padding: 10px;
     box-sizing: border-box;
     border-right: #838383 solid 2px;
-    max-height: 96vh;
+    min-height: 80vh;
     overflow: auto;
 }
 /* 表单容器样式 */

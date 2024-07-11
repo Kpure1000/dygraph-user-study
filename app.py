@@ -85,7 +85,7 @@ def get_data():
         taskManager = userManager.get_task_manager(id)
         if taskManager is None:
             return redirect(url_for('oops', error="TASK_ERROR"))
-        cur_num = taskManager.current_task_num()
+        cur_num = taskManager.current_task_idx()
         logger.info(f"User '{id}', current task '{cur_num}', total_task '{taskManager.total_len}'")
         data = taskManager.current_data()
         logger.info(f"User '{id}' back to task page after all tasks done.")

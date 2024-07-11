@@ -1,0 +1,52 @@
+line {
+    stroke: #808080;
+    stroke-opacity: 0.2;
+    stroke-width: 1.5;
+}
+line.hover_highlight {
+    stroke: #121212;
+    stroke-opacity: 0.7;
+    stroke-width: 1.5;
+}
+
+circle {
+    stroke: #f5f5f5;
+    stroke-width: 1.5;
+    stroke-opacity: 0.9;
+
+    fill: #69a2d0;
+
+    r: 3.5;
+}
+circle.highlight {
+    stroke-width: 1.5;
+    stroke-opacity: 0.9;
+    fill: #ff4f4f;
+    r: 4.5;
+}
+/* circle.highlight.node0{
+    fill: #ff4f4f;
+}
+circle.highlight.node1{
+    fill: #5cc32d;
+}
+circle.highlight.node2{
+    fill: #eca026;
+}
+circle.highlight.node3{
+    fill: #7234ee;
+}
+circle.highlight.node4{
+    fill: #19d0be;
+} */
+circle.hover_highlight {
+    stroke-width: 1.5;
+    stroke-opacity: 0.9;
+
+    
+    /* fill: #69a2d0; */
+    fill: #5cc32d;
+
+
+    r: 4.5;
+}

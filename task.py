@@ -93,14 +93,18 @@ class TaskManager:
             logger.error(f"Failed to init task manager for {self.id}, info: {e}")
             raise Exception(f"Failed to init task manager for {self.id}, info: {traceback.format_exc()}")
         
-    def current_task_num(self):
+    def current_task_idx(self):
         try:
             status, res, _ = self.db.exec(f'select current from tasks where id = {self.id}')
             if status != None:
                 logger.error(f"Failed to get current number for {self.id}, info: {status}")
                 traceback.print_exc()
                 return None
-            return int(res[0][0])
+            if len(res) == 0:
+                logger.error(f"Failed to get current number for {self.id}")
+                raise Exception(f"Failed to get current number for {self.id}")
+            self.__cur_idx__ = int(res[0][0])
+            return self.__cur_idx__
         except Exception as e:
             logger.error(f"Failed to get current number for {self.id}, info: {traceback.format_exc()}")
             raise Exception(f"Failed to get current number for {self.id}, info: {traceback.format_exc()}")

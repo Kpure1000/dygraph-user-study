@@ -41,6 +41,8 @@ body, html {
 }
 .content [highlight] {
     color: #479523;
+    font-size: larger;
+    font-weight: bold;
 }
 .attention {
     margin-top: 20px;

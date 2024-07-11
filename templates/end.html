@@ -36,7 +36,7 @@
             url: "/get-endinfo",
             type: "GET",
             success: function(data) {
-                $({ timeNum_min: 0, timeNum_sec: 0, usersNum: 0 }).animate(
+                $({ timeNum_min: 0, timeNum_sec: 0, usersNum: data.finished_users_count > 1 ? 0 : data.finished_users_count}).animate(
                     { 
                         timeNum_min: Math.floor(data.finish_time / 60),
                         timeNum_sec: Math.floor(data.finish_time % 60),
@@ -57,8 +57,9 @@
                     });
             }, 
             error: function(xhr, status, error) {
-                console.log("Error: " + xhr.responseJSON.error);
-                $("#time-value").text("-")
+                console.error("Error: " + xhr.responseJSON.error);
+                alert("任务尚未结束或结束失败，将尝试回到任务界面。详细信息：" + xhr.responseJSON.error);
+                window.location.href = "/task";
             }
         })
     })

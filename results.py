@@ -22,6 +22,11 @@ class ResultsManager:
 
     def add_result(self, id, task_name, result, final:bool):
         try:
+            status, res_id, _ = self.db.exec(f"select id from tasks where id = {id}")
+            if status != None:
+                raise Exception(f'Error select tasks for id {id}, info: {status}')
+            if len(res_id) == 0:
+                raise Exception(f'Task with id {id} not found')
             status, res, _ = self.db.exec(f'select result, is_saved from results where id = {id}')
             if status != None:
                 raise Exception(f'Error select results for id {id}, info: {status}')
@@ -83,21 +88,27 @@ class ResultsManager:
 
     def get_finish_time(self, id):
         try:
-            status, res1, _ = self.db.exec(f'select submit_time from results where id = {id}')
+            status, res1, _ = self.db.exec(f'select submit_time, is_saved from results where id = {id}')
             if status != None:
                 logger.error(f'Errir selecting results for id {id}, info: {status}')
                 raise Exception(f'Error selecting results for id {id}, info: {status}')
             if len(res1) == 0:
                 logger.error(f'Connot find results for id {id}, info: {status}')
                 raise Exception(f'Connot find results for id {id}, info: {status}')
-            submit_time = res1[0][0]
+            (submit_time, is_saved) = res1[0]
+            if not bool(is_saved):
+                logger.error(f'Results for id {id} are not saved')
+                raise Exception(f'Results for id {id} are not saved')
             end_time = datetime.strptime(submit_time, '%Y-%m-%d %H:%M:%S')
             status, res2, _ = self.db.exec(f'select create_time from user where id = {id}')
             if status != None:
                 logger.error(f'Connot find user info for id {id}, info: {status}')
                 raise Exception(f'Connot find user info for id {id}, info: {status}')
-            (create_time) = res2[0]
-            start_time = datetime.strptime(create_time[0], '%Y-%m-%d %H:%M:%S')
+            if len(res2) == 0:
+                logger.error(f'Connot find user info for id {id}')
+                raise Exception(f'Connot find user info for id {id}')
+            create_time = res2[0][0]
+            start_time = datetime.strptime(create_time, '%Y-%m-%d %H:%M:%S')
             return (end_time - start_time).seconds
         except Exception as e:
             logger.error(f'Error getting time: {traceback.format_exc()}')
