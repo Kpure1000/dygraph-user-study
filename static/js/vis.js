@@ -57,23 +57,48 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
         .append("circle")
         .attr("cx", d => xScale(d.x))
         .attr("cy", d => yScale(d.y))
-        .call(node => node.append("title").text(d => d.id))
+        .call(node => node.append("title").text(d => `${d.id}` + (d.group != undefined ? `[${d.group}]` : "")))
 
     if (hl_nodes_map) {
-        // let i = 0
-        // for (let id of hl_nodes_map) {
-        //     node_link_container.selectAll("circle").filter(d => id == d.id).classed(`highlight node${i % 4}`, true)
-        //     i++
-        // }
         node_link_container.selectAll("circle").filter(d => hl_nodes_map.has(d.id)).classed('highlight', true)
         node_link_container.selectAll("circle").sort((d => hl_nodes_map.has(d.id) ? 1 : -1))
     }
     
     if (hl_groups_map) {
-        node_link_container.selectAll("circle").filter(d => hl_groups_map.has(d.group)).classed('highlight', true)
-        node_link_container.selectAll("circle").sort((d => hl_groups_map.has(d.group) ? 1 : -1))
+
+        const colorGroup = d3.scaleOrdinal(d3.schemeCategory10).domain(Array.from(hl_groups_map));
+
+        for (let group_id of hl_groups_map) {
+
+            // node_link_container.selectAll("circle").filter(d => group_id == d.group).classed('highlight', true)
+            // node_link_container.selectAll("circle").sort((d => group_id == d.group ? 1 : -1))
+            
+            const groupNodes = nodes.filter(d => group_id == d.group)
+
+            const vertices = groupNodes.map(node => [xScale(node.x), yScale(node.y)]);
+
+            const hullGenerater = concaveHull().distance(65).padding(10)
+
+            const hull_vertices_paths = hullGenerater(vertices); // 这是一个二维数组, 每个元素是一个path的坐标数组
+
+            const curve = d3.line()
+                .x(d => d[0])
+                .y(d => d[1])
+                .curve(d3.curveCatmullRom);
+                // .curve(d3.curveLinear);
+
+            node_link_container.append("g").attr("class", "hull")
+                .selectAll("path")
+                .data(hull_vertices_paths) 
+                .enter()
+                .append("path") 
+                .attr("d", (d) => curve(d))
+                .attr("stroke", (d) => colorGroup(group_id))
+                .style('pointer-events', 'none');
+        }
+
     }
-      
+
     node_link_container.selectAll("circle")
         .on("mouseover", function(event, d) {
             if (d.selected == undefined || d.selected == false) {
@@ -135,13 +160,11 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
         function highlight(d) {
             neighbors_links = node2edge.get(d.id)
 
-            // node_link_container.selectAll("line").filter(link => neighbors_links.includes(link)).classed('hover_highlight', true)
-            
-            let new_ele = node_link_container
+            let top_elements = node_link_container
                 .append("g")
                 .attr("id", `${svg_id}_new_ele_${d.id}`)
             
-            new_ele
+            top_elements
                 .selectAll("g")
                 .data(neighbors_links)
                 .enter()
@@ -153,7 +176,7 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
                 .classed('hover_highlight', true)
                 .style('pointer-events', 'none');
                 
-            new_ele
+            top_elements
                 .selectAll("g")
                 .data([d])
                 .enter()
@@ -164,11 +187,7 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
                 .style('pointer-events', 'none');
         }
 
-        function unhighlight(d) {            
-            // neighbors_links = node2edge.get(d.id)
-
-            // node_link_container.selectAll("line").filter(link => neighbors_links.includes(link)).classed('hover_highlight', false)
-
+        function unhighlight(d) {
             node_link_container.selectAll(`g#${svg_id}_new_ele_${d.id}`).remove();
         }
 
