@@ -5,6 +5,21 @@
     <link rel="shortcut icon" href="../static/favicon.png">
     <title>User Study - Dynamic Graph Layout Algorithm</title>
     <link rel="stylesheet" href="../static/css/main.css">
+    <style>
+        .restart input[type="button"]{
+            font-size: large;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        .restart input[type="submit"]:hover{
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -24,6 +39,10 @@
             <p id="users-value" style="margin: 0px 10px;" highlight>-</p>
             <p>人完成了用户调研</p>
         </div>
+
+        <div class="restart">
+            <input type="button" value="回到主页" onclick="restart()">
+        </div>
         
         <div class="attention">
             <p>声明：隐私信息XXX</p>
@@ -32,6 +51,11 @@
 </body>
 <script src="../static/js/jquery-3.6.0.min.js"></script>
 <script>
+
+    function restart() {
+        window.location.href = "/"
+    }    
+
     $( document ).ready(function() {
         $.ajax({
             url: "/get-endinfo",
