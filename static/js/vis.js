@@ -74,27 +74,35 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
             // node_link_container.selectAll("circle").sort((d => group_id == d.group ? 1 : -1))
             
             const groupNodes = nodes.filter(d => group_id == d.group)
+            
+            if (groupNodes.length == 0)
+                continue;
 
-            const vertices = groupNodes.map(node => [xScale(node.x), yScale(node.y)]);
+            new Promise((resolve, reject) => {
+                const vertices = groupNodes.map(node => [xScale(node.x), yScale(node.y)]);
 
-            const hullGenerater = concaveHull().distance(65).padding(10)
-
-            const hull_vertices_paths = hullGenerater(vertices); // 这是一个二维数组, 每个元素是一个path的坐标数组
-
-            const curve = d3.line()
+                const hullGenerater = concaveHull().distance(65).padding(10)
+    
+                const hull_vertices_paths = hullGenerater(vertices); // 这是一个二维数组, 每个元素是一个path的坐标数组
+                
+                resolve(hull_vertices_paths);
+            }).then(hull_vertices_paths => {
+                const curve = d3.line()
                 .x(d => d[0])
                 .y(d => d[1])
                 .curve(d3.curveCatmullRom);
                 // .curve(d3.curveLinear);
 
-            node_link_container.append("g").attr("class", "hull")
-                .selectAll("path")
-                .data(hull_vertices_paths) 
-                .enter()
-                .append("path") 
-                .attr("d", (d) => curve(d))
-                .attr("stroke", (d) => colorGroup(group_id))
-                .style('pointer-events', 'none');
+                node_link_container.append("g").attr("class", "hull")
+                    .selectAll("path")
+                    .data(hull_vertices_paths) 
+                    .enter()
+                    .append("path") 
+                    .attr("d", (d) => curve(d))
+                    .attr("stroke", (d) => colorGroup(group_id))
+                    .style('pointer-events', 'none');
+            })
+            
         }
 
     }
@@ -113,9 +121,6 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
             }
         })
         .on("click", function(event, d) {
-            // clear_highlight()
-            // highlight(d)
-            // d.selected = true
             send_clear_highlight_event()
             send_highlight_event(d.id)
         })
@@ -124,7 +129,6 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
             const clickedElement = event.target;
             
             if (clickedElement.tagName != "circle") {
-                // clear_highlight()
                 send_clear_highlight_event()
             }
         })

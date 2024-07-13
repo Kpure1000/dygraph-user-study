@@ -61,7 +61,7 @@ concaveHull = function () {
 
         return padding !== 0 ? pad(result, padding) : result
     }
-
+    
     function pad(bounds, amount) {
         return bounds.map(bound => {
             // http://forums.esri.com/Thread.asp?c=2&f=1718&t=174277
@@ -71,10 +71,21 @@ concaveHull = function () {
             }).reduce((a, b) => a + b) > 0 ? -1 : 1
 
             return bound.map((p, i) => {
-                const normal = rotate(tan(p, bound[i === 0 ? bound.length - 2 : i - 1]), 90 * handedness)
+                const pm_p = tan(p, bound[i === 0 ? bound.length - 2 : i - 1])
+                const p_pn = tan(bound[i >= bound.length - 1 ? 1 : i + 1], p)
+                const normal = normalize(rotate(add(pm_p, p_pn), 90 * handedness))
                 return [p[0] + normal.x * amount, p[1] + normal.y * amount]
             })
         })
+    }
+
+    function add(a, b) {
+        return { x: a.x + b.x, y: a.y + b.y }
+    }
+
+    function normalize(a) {
+        const mag = Math.sqrt(a.x * a.x + a.y * a.y)
+        return { x: a.x / mag, y: a.y / mag }
     }
 
     function tan(a, b) {
