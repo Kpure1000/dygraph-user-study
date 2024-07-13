@@ -25,6 +25,9 @@ class UserManager:
                 return None, status
             id = lastrowid
             self.taskManagers[id] = TaskManager(self.db, id)
+            
+            logger.info(f"User {id} added, name: '{name}', gender: '{gender}', age: {age}")
+
         except Exception as e:
             logger.error(f"Error adding user: {e}")
             traceback.print_exc()

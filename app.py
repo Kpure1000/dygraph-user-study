@@ -137,8 +137,6 @@ def next_task():
         q2 = request.form['q2']
         q2 = int(q2) if q2 != None and q2 != "" else 0
 
-        logger.info(f"q1: {q1}, q2: {q2}")
-
         method, dataset = taskManager.current_task_info()
 
         is_final = taskManager.is_final_task()

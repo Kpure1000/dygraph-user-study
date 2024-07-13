@@ -5,7 +5,7 @@
     "age": 24,
     "finish_time": 600,
     "results": {
-        "task1": [
+        "node": [
             {
                 "method": "1",
                 "dataset": "A",
@@ -25,7 +25,7 @@
                 "q2": 0
             }
         ],
-        "task2": [
+        "cluster": [
             {
                 "method": "1",
                 "dataset": "A",

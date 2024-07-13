@@ -12,7 +12,7 @@ class Database:
             logger.debug(f"Database '{name}' connected")
         except Exception as e:
             logger.error(f"Database '{name}' connection failed: {traceback.format_exc()}")
-            traceback.print_exc()
+            raise e
         
     def exec(self, cmd):
         status = None

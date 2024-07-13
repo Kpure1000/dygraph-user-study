@@ -8,8 +8,8 @@ from utils import logger
 from database import Database
 from rls import random_latin_square
 
-task1_name = "task1"
-task2_name = "task2"
+task1_name = "node"
+task2_name = "cluster"
 
 class Task:
     def __init__(self, name):
@@ -58,11 +58,11 @@ class Task:
 
 class Task1(Task):
     def __init__(self):
-        super().__init__("node")
+        super().__init__(task1_name)
 
 class Task2(Task):
     def __init__(self):
-        super().__init__("cluster")
+        super().__init__(task2_name)
 
 
 __task1__ = Task1()
@@ -95,15 +95,16 @@ class TaskManager:
                 # load
                 self.data_list = json.loads(res[0][0])
                 self.__cur_idx__ = res[0][1]
+                logger.info(f"Task schedule for {self.id} exist, load from db. Current task index: {self.__cur_idx__}. List: \n{self.data_list}")
             else: # not exist
-
                 self.data_list = task1_list + task2_list
-
+                logger.info(f"Task schedule for {self.id} not exist, create new: \n Task1: {task1_list}\n  Task2: {task2_list}")
                 # save
                 status, res, _ = self.db.exec(f"insert into tasks (id, task, current) values ({id}, '{json.dumps(self.data_list)}', {self.__cur_idx__})")    
                 if status != None:
                     logger.error(f"Failed to insert task, info: {status}")
                     raise Exception(f"Failed to insert task, info: {status}")
+                logger.info(f"Task schedule for {self.id} saved")
                 
         except Exception as e:
             logger.error(f"Failed to init task manager for {self.id}, info: {e}")
@@ -142,6 +143,9 @@ class TaskManager:
                 logger.error(f"Failed to update current number, info: {status}")
                 traceback.print_exc()
                 return False
+            
+            logger.info(f"Task index for {self.id} updated to {self.__cur_idx__}")
+            
             return True
         except Exception as e:
             logger.error(f"Failed to set next task for {self.id}, info: {traceback.format_exc()}")

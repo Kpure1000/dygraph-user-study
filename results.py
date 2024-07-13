@@ -35,6 +35,9 @@ class ResultsManager:
                 status, _, _ = self.db.exec(f"insert into results (id, result, is_saved) values ({id}, '{json.dumps(results)}', {final})")
                 if status != None:
                     raise Exception(f'Error inserting results for id {id}, info: {status}')
+                
+                logger.info(f"Results for id {id} created")
+
             else:
                 (results, is_saved) = res[0]
                 if bool(is_saved):
@@ -47,44 +50,12 @@ class ResultsManager:
                 status, _, _ = self.db.exec(f"update results set result='{json.dumps(results)}', is_saved={final} where id = {id}")
                 if status != None:
                     raise Exception(f'Error updating results for id {id}, info: {status}')
+                
+                logger.info(f"Results for id {id} updated, is {' NOT ' if not final else ' '}final.")
+
         except Exception as e:
             logger.error(f'Error adding result for id {id}, info: {e}')
             raise Exception(f'Error adding result for id {id}, info: {traceback.format_exc()}')
-
-    def export_results(self, id):
-        try:
-            status, res1, _ = self.db.exec(f'select result, submit_time, is_saved from results where id = {id}')
-            if status != None:
-                logger.error(f'Error select results for id {id}, info: {status}')
-                raise Exception(f'Error select results for id {id}, info: {status}')
-            if len(res1) == 0:
-                logger.error(f'No results found for id {id}')
-                raise Exception(f'No results found for id {id}')
-            (results, submit_time, is_saved) = res1[0]
-            if not bool(is_saved):
-                logger.error(f'Results for id {id} are not saved')
-                raise Exception(f'Results for id {id} are not saved')
-            finish_time = datetime.strptime(submit_time, '%Y-%m-%d %H:%M:%S')
-            status, res2, _ = self.db.exec(f'select name, gender, age, create_time from user where id = {id}')
-            if status != None:
-                logger.error(f'Error select user info for id {id}, info: {status}')
-                return
-            (name, gender, age, create_time) = res2[0]
-            start_time = datetime.strptime(create_time, '%Y-%m-%d %H:%M:%S')
-            final_result = {
-                "id": id,
-                "name": name,
-                "gender": gender,
-                "age": int(age),
-                "finish_time": (finish_time - start_time).seconds,
-                "results": json.loads(results)
-            }
-            logger.info(f'Exporting results for id {id}, results: {final_result}')
-            with open(f'results/{id}.json', 'w') as f:
-                json.dump(final_result, f, indent=4)
-        except Exception as e:
-            logger.error(f'Error saving results for id {id}, info: {e}')
-            raise Exception(f'Error saving results for id {id}, info: {traceback.format_exc()}')
 
     def get_finish_time(self, id):
         try:
