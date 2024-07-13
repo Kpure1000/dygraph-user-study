@@ -1,28 +1,44 @@
 import os.path
 import glob
 import json
+import random
+import time
 import traceback
 from utils import logger
 from database import Database
+from rls import random_latin_square
 
 task1_name = "task1"
 task2_name = "task2"
 
 class Task:
     def __init__(self, name):
-        print("Task Init")
-        root_path = f"data/{name}"
-        method_folders = glob.glob(root_path + "/*")
-        self.tasks = {}
-        for m in method_folders:
-            method = os.path.basename(m)
-            self.tasks[method] = {}
-            for d in glob.glob(m+"/*"):
-                dataset = os.path.splitext(os.path.basename(d))[0]
-                with open(d) as f:
-                    self.tasks[method][dataset] = json.load(f)
+        try:
+            self.rng = random.Random()
+            self.rng.seed(time.time())
+            root_path = f"data/{name}"
+            method_folders = glob.glob(root_path + "/*")
+            self.tasks = {}
+            for m in method_folders:
+                method = os.path.basename(m)
+                self.tasks[method] = {}
+                for d in glob.glob(m + "/*.json"):
+                    dataset = os.path.splitext(os.path.basename(d))[0]
+                    with open(d) as f:
+                        self.tasks[method][dataset] = json.load(f)
 
-    def get_data_list(self):
+            # self.__latin_square__ = random_latin_square(self.total_len)
+
+            # logger.info(f"Task '{name}' init with latin square: \n{self.__latin_square__}")
+
+            logger.info(f"Task '{name}' init.")
+
+        except Exception as e:
+            logger.error(f"Failed to init task '{name}', info: {traceback.format_exc()}")
+            raise e
+
+
+    def get_random_data_list(self):
         data_list = []
 
         for method in self.tasks:
@@ -31,6 +47,8 @@ class Task:
                     "method": method,
                     "dataset": dataset,
                 })
+
+        self.rng.shuffle(data_list)
 
         return data_list
     
@@ -53,14 +71,14 @@ __task2__ = Task2()
 
 class TaskManager:
     def __init__(self, db:Database, id:int):
-        
+
         try:
             self.db = db
             self.id = id
-            
-            task1_list = __task1__.get_data_list()
-            task2_list = __task2__.get_data_list()
-            
+
+            task1_list = __task1__.get_random_data_list()
+            task2_list = __task2__.get_random_data_list()
+
             self.__len_task1 = len(task1_list)
             self.__len_task2 = len(task2_list)
 
@@ -79,9 +97,7 @@ class TaskManager:
                 self.__cur_idx__ = res[0][1]
             else: # not exist
 
-                # TODO Latin square
-
-                self.data_list = task1_list + __task2__.get_data_list()
+                self.data_list = task1_list + task2_list
 
                 # save
                 status, res, _ = self.db.exec(f"insert into tasks (id, task, current) values ({id}, '{json.dumps(self.data_list)}', {self.__cur_idx__})")    
