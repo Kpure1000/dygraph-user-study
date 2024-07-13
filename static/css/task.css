@@ -37,6 +37,7 @@ body, html {
     box-sizing: border-box;
     border-right: #838383 solid 2px;
     min-height: 80vh;
+    max-height: 95vh;
     overflow: auto;
 }
 /* 表单容器样式 */
