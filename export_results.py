@@ -16,7 +16,7 @@ def get_finished_users(db):
     except Exception as e:
         logger.error(f'Error getting finished users: {traceback.format_exc()}')
         raise e
-    
+
 def export_results(db, id):
     try:
         status, res1, _ = db.exec(f'select result, submit_time, is_saved from results where id = {id}')
@@ -46,8 +46,8 @@ def export_results(db, id):
             "results": json.loads(results)
         }
         logger.info(f'Saving results for id {id}, results: {final_result}')
-        with open(f'results/result-{id}.json', 'w') as f:
-            json.dump(final_result, f, indent=4)
+        with open(f'results/result-{id}.json', 'w', encoding='utf-8') as f:
+            json.dump(obj=final_result, fp=f, indent=4, ensure_ascii=False)
         logger.info(f'Exported results for id {id} successfully')
         return True
     except Exception as e:
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     logger.info(f'Finished users: {uids}')
 
     logger.info(f'Exporting results for {len(uids)} users.')
-    
+
     count = 0
 
     for uid in uids:
