@@ -6,13 +6,21 @@
     <title>Task</title>
     <link rel="stylesheet" href="../static/css/task.css">
     <link rel="stylesheet" href="../static/css/vis.css">
+    <link rel="stylesheet" href="../static/css/loading.css">
 </head>
 <body>
 
     <div class="container">
     
         <!-- SVG容器 -->
-        <div class="svg-container">
+        <div id="loading-animation" class="loading">
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+            <div class="rect5"></div>
+        </div>
+        <div id="slices-container" class="svg-container" style="display: none;">
             <ul id="slices">
             </ul>
         </div>
@@ -54,7 +62,7 @@
                     
                     <input type="number" name="q2" id="q2-number" value="" min=1 max=100 oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                     <label for="q2-number">%</label>
-                    <p class="hint">范围：(0, 500]</p>
+                    <p class="hint">范围：整数，(0, 500]</p>
 
                 </div>
 

@@ -1,0 +1,53 @@
+.loading {
+    flex: 3;
+    max-width: 75%;
+    padding: 10px;
+    min-height: 80vh;
+    max-height: 95vh;
+    
+    background-color: #efefef;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .rect1, .rect2, .rect3, .rect4, .rect5 {
+    
+    background-color: #333;
+    width: 30px;
+    height: 30px;
+    border-radius: 10%;
+    margin: 5px;
+
+  }
+  
+  .rect1 {
+    animation: bounce 2s infinite;
+  }
+  
+  .rect2 {
+    animation: bounce 2s infinite 0.1s;
+  }
+  
+  .rect3 {
+    animation: bounce 2s infinite 0.2s;
+  }
+  
+  .rect4 {
+    animation: bounce 2s infinite 0.3s;
+  }
+  
+  .rect5 {
+    animation: bounce 2s infinite 0.4s;
+  }
+  
+  @keyframes bounce {
+    0%, 80%, 100% {
+      transform: scale(0);
+    }
+    40% {
+      transform: scale(1);
+    }
+  }

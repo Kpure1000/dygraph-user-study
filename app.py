@@ -68,7 +68,7 @@ def start():
         if status != None:
             return respond_with_error(status, 500)
         resp = make_response(redirect(url_for('task')))
-        resp.set_cookie('id', f'{id}', max_age=3600)
+        resp.set_cookie('id', f'{id}', max_age=240 * 60) # 限制完成时间为240分钟，过时将清除cookie
         return resp
     except Exception as e:
         logger.error("start error")

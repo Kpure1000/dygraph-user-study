@@ -36,7 +36,8 @@ $(document).ready(function() {
         url: '/get-data',
         type: 'GET',
         success: function(data) {
-            // console.log(data);
+            $("#loading-animation").hide();
+            $('#slices-container').show();
             
             $('#current_uid').text(data["uid"])
             $('#current_task').text(data["cur_task"] + 1)
@@ -71,8 +72,6 @@ $(document).ready(function() {
                 </li>`)
             }
 
-            console.log("svg done");
-            
             new Promise((resolve, reject) => {
                 const node_extand = layout_normalize(total_nodes)
                 for (let i = 0; i < data_slices.length; i++) {
@@ -80,7 +79,7 @@ $(document).ready(function() {
                 }
                 resolve('Graph drawn successfully');
             }).then(res => {
-                console.log(res);
+                //
             })
 
             

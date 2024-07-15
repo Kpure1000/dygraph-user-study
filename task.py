@@ -19,24 +19,50 @@ class Task:
             root_path = f"data/{name}"
             method_folders = glob.glob(root_path + "/*")
             self.tasks = {}
+            if len(method_folders) != 4:
+                raise Exception(f"Task '{name}' init failed, method number is {len(method_folders)}, instead of 4")
             for m in method_folders:
                 method = os.path.basename(m)
                 self.tasks[method] = {}
-                for d in glob.glob(m + "/*.json"):
+                datasets = glob.glob(m + "/*.json")
+                if len(datasets) != 4:
+                    raise Exception(f"Task '{name}' init failed, dataset number is {len(datasets)}, instead of 4")
+                for d in datasets:
                     dataset = os.path.splitext(os.path.basename(d))[0]
                     with open(d) as f:
                         self.tasks[method][dataset] = json.load(f)
 
-            # self.__latin_square__ = random_latin_square(self.total_len)
+            self.__latin_square__ = [
+                0, 1+4, 2+8, 3+12,
+                1, 2+4, 3+8, 0+12,
+                2, 3+4, 0+8, 1+12,
+                3, 0+4, 1+8, 2+12
+            ]
 
-            # logger.info(f"Task '{name}' init with latin square: \n{self.__latin_square__}")
+            data_list = []
 
-            logger.info(f"Task '{name}' init.")
+            for method in self.tasks:
+                for dataset in self.tasks[method]:
+                    data_list.append({
+                        "method": method,
+                        "dataset": dataset,
+                    })
+
+            self.data_list = [data_list[i] for i in self.__latin_square__]
+
+            logger.info(f"Task '{name}' init with data list: \n{self.data_list}")
+
+            logger.info(f"Task '{name}' init successful.")
 
         except Exception as e:
             logger.error(f"Failed to init task '{name}', info: {traceback.format_exc()}")
             raise e
 
+    def get_data_list(self):
+        return self.data_list
+    
+    def get_data(self, method, dataset):
+        return self.tasks[method][dataset]
 
     def get_random_data_list(self):
         data_list = []
@@ -52,9 +78,6 @@ class Task:
 
         return data_list
     
-    def get_data(self, method, dataset):
-        return self.tasks[method][dataset]
-
 
 class Task1(Task):
     def __init__(self):
@@ -76,8 +99,8 @@ class TaskManager:
             self.db = db
             self.id = id
 
-            task1_list = __task1__.get_random_data_list()
-            task2_list = __task2__.get_random_data_list()
+            task1_list = __task1__.get_data_list()
+            task2_list = __task2__.get_data_list()
 
             self.__len_task1 = len(task1_list)
             self.__len_task2 = len(task2_list)

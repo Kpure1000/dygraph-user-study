@@ -45,16 +45,28 @@ def export_results(db, id):
             "finish_time": (finish_time - start_time).seconds,
             "results": json.loads(results)
         }
-        logger.info(f'Exporting results for id {id}, results: {final_result}')
+        logger.info(f'Saving results for id {id}, results: {final_result}')
         with open(f'results/result-{id}.json', 'w') as f:
             json.dump(final_result, f, indent=4)
+        logger.info(f'Exported results for id {id} successfully')
+        return True
     except Exception as e:
-        logger.error(f'Error saving results for id {id}, info: {traceback.format_exc()}')
+        logger.error(f'Error exporting results for id {id}, info: {traceback.format_exc()}')
+        return False
 
 if __name__ == '__main__':
     db = Database("user-study.sqlite3")
 
     uids = get_finished_users(db)
+
+    logger.info(f'Finished users: {uids}')
+
+    logger.info(f'Exporting results for {len(uids)} users.')
     
+    count = 0
+
     for uid in uids:
-        export_results(db, uid)
+        if export_results(db, uid):
+            count += 1
+
+    logger.info(f'Results exported finished: {count} success, {len(uids) - count} failed.')

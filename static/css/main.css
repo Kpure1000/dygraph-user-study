@@ -41,10 +41,11 @@ body, html {
 }
 .content [highlight] {
     color: #479523;
-    font-size: larger;
+    /* font-size: larger; */
     font-weight: bold;
 }
 .attention {
+    text-align: center;
     margin-top: 20px;
     color: #5b5b5b
 }
@@ -58,7 +59,7 @@ body, html {
     word-break: break-word;
     color: #474747;
     /* text-indent: 2em; */
-    line-height: 2em;
+    line-height: 2.5em;
 }
 
 .form form {
@@ -91,7 +92,7 @@ body, html {
     cursor: pointer;
 }
 .description input[type="button"] {
-    margin: 20px 3px;
+    margin: 5px 3px;
     cursor: default;
 }
 .form input[type="submit"]:hover {
