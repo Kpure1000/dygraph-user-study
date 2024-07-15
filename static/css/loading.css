@@ -20,6 +20,7 @@
     height: 30px;
     border-radius: 10%;
     margin: 5px;
+    transform: scale(0);
 
   }
   
