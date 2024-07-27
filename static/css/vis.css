@@ -4,7 +4,7 @@ line {
     stroke-width: 1.5;
 }
 line.hover_highlight {
-    stroke: #49dd84;
+    stroke: #8b8b8b;
     stroke-opacity: 1.0;
     stroke-width: 1.2;
 }
@@ -18,7 +18,7 @@ circle {
     r: 3.5;
 }
 circle.highlight {
-    fill: #ff4f4f;
+    fill: #ff4f4f !important;
     /* r: 4.5; */
 }
 circle.hover_highlight {

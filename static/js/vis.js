@@ -187,6 +187,7 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
                 .append("circle")
                 .attr("cx", d => xScale(d.x))
                 .attr("cy", d => yScale(d.y))
+                .classed('highlight', hl_nodes_map != null && hl_nodes_map.has(d.id))
                 .classed('hover_highlight', true)
                 .style('pointer-events', 'none');
         }

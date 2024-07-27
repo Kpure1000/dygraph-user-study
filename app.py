@@ -86,10 +86,11 @@ def get_data():
         if taskManager is None:
             return redirect(url_for('oops', error="TASK_ERROR"))
         cur_num = taskManager.current_task_idx()
-        logger.info(f"User '{id}', current task '{cur_num}', total_task '{taskManager.total_len}'")
+        method, dataset = taskManager.current_task_info()
+        logger.info(f"User '{id}', current task '{method}-{dataset}', {cur_num + 1}/{taskManager.total_len}")
         data = taskManager.current_data()
-        logger.info(f"User '{id}' back to task page after all tasks done.")
         if data == None:
+            logger.info(f"User '{id}' back to task page after all tasks done.")
             return respond_with_error(str("已经完成所有任务，请退出系统"), 500)
         return jsonify({
             "uid": id,
