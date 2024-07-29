@@ -42,7 +42,7 @@ def export_results(db, id):
             "name": name,
             "gender": gender,
             "age": int(age),
-            "finish_time": (finish_time - start_time).seconds,
+            # "finish_time": (finish_time - start_time).seconds,
             "results": json.loads(results)
         }
         logger.info(f'Saving results for id {id}, results: {final_result}')

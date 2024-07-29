@@ -36,6 +36,19 @@ $(document).ready(function() {
         url: '/get-data',
         type: 'GET',
         success: function(data) {
+            start_task(data)
+        },
+        error: function(xhr, status, error) {
+            alert(`获取数据失败，详细信息: ${xhr.responseJSON.error}`)
+        },
+    })
+})
+
+function start_task(data) {
+    $.ajax({
+        url: '/start-task',
+        type: 'GET',
+        success: function() {
             $("#loading-animation").hide();
             $('#slices-container').show();
             
@@ -72,23 +85,18 @@ $(document).ready(function() {
                 </li>`)
             }
 
-            new Promise((resolve, reject) => {
-                const node_extand = layout_normalize(total_nodes)
-                for (let i = 0; i < data_slices.length; i++) {
-                    fixed_layout(`slice${i + 1}`, data_slices[i], node_extand.min, node_extand.max, hl_nodes, hl_groups)
-                }
-                resolve('Graph drawn successfully');
-            }).then(res => {
-                //
-            })
-
+            const node_extand = layout_normalize(total_nodes)
+            for (let i = 0; i < data_slices.length; i++) {
+                fixed_layout(`slice${i + 1}`, data_slices[i], node_extand.min, node_extand.max, hl_nodes, hl_groups)
+            }
             
         },
         error: function(xhr, status, error) {
-            alert(`获取数据失败，详细信息: ${xhr.responseJSON.error}`)
+            alert(`开始任务失败，详细信息: ${xhr.responseJSON.error}`)
         },
     })
-})
+
+}
 
 function layout_normalize(nodess) {
     let xmin = Number.MAX_VALUE, ymin = Number.MAX_VALUE,

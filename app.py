@@ -49,7 +49,7 @@ def task():
         taskManager = userManager.get_task_manager(id)
         if taskManager is None:
             return redirect(url_for('oops', error="TASK_ERROR"))
-        if taskManager.current_task() == 1:
+        if taskManager.current_task_type() == 1:
             return render_template('task1.html')
         else:
             return render_template('task2.html')
@@ -95,11 +95,29 @@ def get_data():
         return jsonify({
             "uid": id,
             "cur_task": cur_num,
-            "task_type": taskManager.current_task(),
+            "task_type": taskManager.current_task_type(),
             "data": data
         })
     except Exception as e:
         logger.error(f"User '{id}' get_data error")
+        traceback.print_exc()
+        return redirect(url_for('oops', error=str(e)))
+
+@app.route('/start-task', methods=['GET'])
+def start_task():
+    try:
+        id = request.cookies.get('id')
+        if id == None:
+            return redirect(url_for('oops', error="NO_COOKIE_ID"))
+        id = int(id)
+        taskManager = userManager.get_task_manager(id)
+        if taskManager is None:
+            return redirect(url_for('oops', error="TASK_ERROR"))
+        # record start time only for first request
+        taskManager.start_task()
+        return redirect(url_for('get_data'))
+    except Exception as e:
+        logger.error(f"User '{id}' start_task error")
         traceback.print_exc()
         return redirect(url_for('oops', error=str(e)))
 
@@ -139,13 +157,16 @@ def next_task():
         q2 = int(q2) if q2 != None and q2 != "" else 0
 
         method, dataset = taskManager.current_task_info()
+        finish_time = taskManager.end_task()
+
+        new_result = { "method": method, "dataset": dataset, "q1": q1, "q2": q2, "finish_time": finish_time }
 
         is_final = taskManager.is_final_task()
 
-        if taskManager.current_task() == 1:
-            userManager.resultsManager.add_result(id, task1_name, { "method": method, "dataset": dataset, "q1": q1, "q2": q2 }, is_final)
+        if taskManager.current_task_type() == 1:
+            userManager.resultsManager.add_result(id, task1_name, new_result, is_final)
         else:
-            userManager.resultsManager.add_result(id, task2_name, { "method": method, "dataset": dataset, "q1": q1, "q2": q2 }, is_final)
+            userManager.resultsManager.add_result(id, task2_name, new_result, is_final)
 
         if taskManager.next():
             return redirect(url_for('task'))

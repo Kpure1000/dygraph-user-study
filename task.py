@@ -7,6 +7,7 @@ import traceback
 from utils import logger
 from database import Database
 from rls import random_latin_square
+from datetime import datetime
 
 task1_name = "node"
 task2_name = "cluster"
@@ -187,7 +188,7 @@ class TaskManager:
             logger.error(f"Failed to get current data for {self.id}, info: {traceback.format_exc()}")
             raise Exception(f"Failed to get current data for {self.id}, info: {traceback.format_exc()}")
     
-    def current_task(self):
+    def current_task_type(self):
         try:
             cur = self.__cur_idx__
             if cur < self.__len_task1:
@@ -195,8 +196,8 @@ class TaskManager:
             else:
                 return 2
         except Exception as e:
-            logger.error(f"Failed to get current task for {self.id}, info: {traceback.format_exc()}")
-            raise Exception(f"Failed to get current task for {self.id}, info: {traceback.format_exc()}")
+            logger.error(f"Failed to get current task type for {self.id}, info: {traceback.format_exc()}")
+            raise Exception(f"Failed to get current task type for {self.id}, info: {traceback.format_exc()}")
 
     def current_task_info(self):
         try:
@@ -205,3 +206,77 @@ class TaskManager:
         except Exception as e:
             logger.error(f"Failed to get current task info for {self.id}, info: {traceback.format_exc()}")
             raise Exception(f"Failed to get current task info for {self.id}, info: {traceback.format_exc()}")
+
+    def start_task(self)->bool:
+        try:
+            cur = self.__cur_idx__
+            # get start_time
+            status, res, _ = self.db.exec(f'select start_time from tasks where id = {self.id}')
+            if status != None:
+                logger.error(f"Failed to get start_time for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+                raise Exception(f"Failed to get start_time for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+            if len(res) == 0:
+                logger.error(f"Task record for user'{self.id}' task'{cur}' not exist")
+                raise Exception(f"Task record for user'{self.id}' task'{cur}' not exist")
+            
+            start_time = res[0][0]
+            logger.debug(f"---start IN_DEV--- start for user'{self.id}' task'{cur}' is {start_time}")
+            
+            if start_time == None: 
+                # update start_time
+                status, _, _ = self.db.exec(f"update tasks set start_time = datetime(CURRENT_TIMESTAMP,'localtime') where id = {self.id}")
+                if status != None:
+                    logger.error(f"Failed to update start_time for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+                    raise Exception(f"Failed to update start_time for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+                return True
+            else:
+                # not the first time starting task, so do nothing
+                return False
+        
+        except Exception as e:
+            logger.error(f"Failed to start task for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+            raise Exception(f"Failed to start task for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+
+    def end_task(self)->float:
+        try:
+            cur = self.__cur_idx__
+
+            # get start_time
+            status, res, _ = self.db.exec(f'select start_time from tasks where id = {self.id}')
+            if status != None:
+                logger.error(f"Failed to get start_time for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+                raise Exception(f"Failed to get start_time for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+            if len(res) == 0:
+                logger.error(f"Task record for user'{self.id}' task'{cur}' not exist")
+                raise Exception(f"Task record for user'{self.id}' task'{cur}' not exist")
+            
+            start_time = res[0][0]
+            logger.debug(f"--- end_task IN_DEV--- start for user'{self.id}' task'{cur}' is '{start_time}'")
+            
+            if start_time == None: 
+                # if this start_time is empty, raise Exception
+                logger.error(f"Task record for user'{self.id}' task'{cur}' not started")
+                raise Exception(f"Task record for user'{self.id}' task'{cur}' not started")
+            else:
+                # set start_time to empty
+                status, _, _ = self.db.exec(f"update tasks set start_time = null where id = {self.id}")
+                if status != None:
+                    logger.error(f"Failed to clear start_time for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+                    raise Exception(f"Failed to clear start_time for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+                
+                # get current time
+                status, res_curtime, _ = self.db.exec(f"select datetime(CURRENT_TIMESTAMP,'localtime')")
+                if status != None:
+                    logger.error(f"Failed to get current time for user'{self.id}'  task'{cur}', info: {traceback.format_exc()}")
+                    raise Exception(f"Failed to get current time for user'{self.id}'  task'{cur}', info: {traceback.format_exc()}")
+                
+                # calculate the time and return
+                logger.debug(f"---IN_DEV--- current time: {res_curtime}")
+                end_datetime = datetime.strptime(res_curtime[0][0], '%Y-%m-%d %H:%M:%S')
+                start_datetime = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+
+                return (end_datetime - start_datetime).seconds
+        
+        except Exception as e:
+            logger.error(f"Failed to end task for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
+            raise Exception(f"Failed to end task for user'{self.id}' task'{cur}', info: {traceback.format_exc()}")
