@@ -74,14 +74,23 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
             // node_link_container.selectAll("circle").sort((d => group_id == d.group ? 1 : -1))
             
             const groupNodes = nodes.filter(d => group_id == d.group)
-            
             if (groupNodes.length == 0)
                 continue;
 
             new Promise((resolve, reject) => {
                 const vertices = groupNodes.map(node => [xScale(node.x), yScale(node.y)]);
+                    
+                // let xval = d3.extent(groupNodes, d => d.x)
+                // let yval = d3.extent(groupNodes, d => d.x)
+                // let xmin = Number.MAX_VALUE, ymin = Number.MAX_VALUE, xmax = Number.NEGATIVE_INFINITY, ymax = Number.NEGATIVE_INFINITY
+                // xmin = xScale(Math.min(xval[0], xmin))
+                // ymin = yScale(Math.min(yval[0], ymin))
+                // xmax = xScale(Math.max(xval[1], xmax))
+                // ymax = yScale(Math.max(yval[1], ymax))
+                // // let max_distance = Math.sqrt((xmax - xmin) * (xmax - xmin), (ymax - ymin) * (ymax - ymin))
+                // let max_distance = Math.max(xmax - xmin, ymax - ymin)
 
-                const hullGenerater = concaveHull().distance(65).padding(10)
+                const hullGenerater = concaveHull().distance(65).padding(4);
     
                 const hull_vertices_paths = hullGenerater(vertices); // 这是一个二维数组, 每个元素是一个path的坐标数组
                 

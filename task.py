@@ -220,7 +220,6 @@ class TaskManager:
                 raise Exception(f"Task record for user'{self.id}' task'{cur}' not exist")
             
             start_time = res[0][0]
-            logger.debug(f"---start IN_DEV--- start for user'{self.id}' task'{cur}' is {start_time}")
             
             if start_time == None: 
                 # update start_time
@@ -251,7 +250,6 @@ class TaskManager:
                 raise Exception(f"Task record for user'{self.id}' task'{cur}' not exist")
             
             start_time = res[0][0]
-            logger.debug(f"--- end_task IN_DEV--- start for user'{self.id}' task'{cur}' is '{start_time}'")
             
             if start_time == None: 
                 # if this start_time is empty, raise Exception
@@ -271,7 +269,6 @@ class TaskManager:
                     raise Exception(f"Failed to get current time for user'{self.id}'  task'{cur}', info: {traceback.format_exc()}")
                 
                 # calculate the time and return
-                logger.debug(f"---IN_DEV--- current time: {res_curtime}")
                 end_datetime = datetime.strptime(res_curtime[0][0], '%Y-%m-%d %H:%M:%S')
                 start_datetime = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
 

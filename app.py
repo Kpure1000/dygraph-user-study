@@ -95,6 +95,7 @@ def get_data():
         return jsonify({
             "uid": id,
             "cur_task": cur_num,
+            "cur_method": method,
             "task_type": taskManager.current_task_type(),
             "data": data
         })
@@ -154,7 +155,7 @@ def next_task():
             return redirect(url_for('oops', error="TASK_ERROR"))
         q1 = str(request.form['answer'])
         q2 = request.form['q2']
-        q2 = int(q2) if q2 != None and q2 != "" else 0
+        q2 = float(q2) if q2 != None and q2 != "" else 0
 
         method, dataset = taskManager.current_task_info()
         finish_time = taskManager.end_task()

@@ -54,6 +54,7 @@ function start_task(data) {
             
             $('#current_uid').text(data["uid"])
             $('#current_task').text(data["cur_task"] + 1)
+            let cur_method = data["cur_method"]
             let task_type = data["task_type"]
             vis_data = data["data"]
             let hl_slices = null
@@ -65,6 +66,17 @@ function start_task(data) {
             } else {
                 hl_groups = vis_data["highlight-groups"]
                 hl_slices = vis_data["highlight-slices"]
+            }
+            
+            hl_slices = hl_slices.sort((a, b) => a - b)
+            
+            $('#time-slices-text').text("t" + (hl_slices[0] + 1) + ", " + "t" + (hl_slices[1] + 1));
+            $('#time-slices-text-1').text("t" + (hl_slices[1] + 1));
+            $('#time-slices-text-2').text("t" + (hl_slices[0] + 1));
+
+            if (hl_groups != null) {
+                $('#a-cluster').css("display", hl_groups.length == 1 ? "inline" : "none")
+                $('#double-cluster').css("display", hl_groups.length == 2 ? "inline" : "none")
             }
             
             hl_slices = new Set(hl_slices)
@@ -84,9 +96,11 @@ function start_task(data) {
                         </div>
                 </li>`)
             }
-
-            const node_extand = layout_normalize(total_nodes)
+            
+            let node_extand = global_normalize(total_nodes)
             for (let i = 0; i < data_slices.length; i++) {
+                if (cur_method === "incremental")
+                    node_extand = local_normalize(data_slices[i].nodes);
                 fixed_layout(`slice${i + 1}`, data_slices[i], node_extand.min, node_extand.max, hl_nodes, hl_groups)
             }
             
@@ -98,7 +112,22 @@ function start_task(data) {
 
 }
 
-function layout_normalize(nodess) {
+function local_normalize(nodes) {
+    xval = d3.extent(nodes, d => d.x)
+    yval = d3.extent(nodes, d => d.y)
+
+    console.log("xmin=" + xval[0], "xmax=" + xval[1], "ymin=" + yval[0], "ymax=" + yval[1])
+
+    let center = {x: (xval[0] + xval[1]) * 0.5, y: (yval[0] + yval[1]) * 0.5}
+    let scale = Math.max((xval[1] - xval[0]) * 0.5, (yval[1] - yval[0]) * 0.5)
+    
+    return {
+        min: {x: center.x - scale, y: center.y - scale},
+        max: {x: center.x + scale, y: center.y + scale}
+    }
+}
+
+function global_normalize(nodess) {
     let xmin = Number.MAX_VALUE, ymin = Number.MAX_VALUE,
         xmax = Number.NEGATIVE_INFINITY, ymax = Number.NEGATIVE_INFINITY
     for (let nodes in nodess) {

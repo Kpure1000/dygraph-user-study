@@ -37,16 +37,16 @@
             <form action="/next-task" method="post">
                 <div class="q-container">
 
-                    <p>1. 在给定的<span highlight>高亮</span>时间片中，观察两个<span highlight>高亮</span>节点，根据节点坐标以及两点间的距离，判断两点间连接强度的变化，在以下三个选项中选择一个：</p>
+                    <p>1. 在给定的高亮时间片<span id="time-slices-text" highlight></span>中，观察两个<span highlight>高亮</span>节点，判断两点间距离的变化，在以下三个选项中选择一个：</p>
                     
                     <div id="r-group" style="margin-bottom: 20px;">
                         <div style="margin-top: 10px;">
                             <input type="radio" id="radio-increase" name="answer" value="increase" required />
-                            <label for="radio-increase">增强</label>
+                            <label for="radio-increase">变短</label>
                         </div>
                         <div style="margin-top: 10px;">
                             <input type="radio" id="radio-decrease" name="answer" value="decrease" />
-                            <label for="radio-decrease">减弱</label>
+                            <label for="radio-decrease">变长</label>
                         </div>
                         <div style="margin-top: 10px;">
                             <input type="radio" id="radio-none" name="answer" value="none" />
@@ -58,11 +58,13 @@
                 
                 <div id="q2-container" class="q-container">
 
-                    <p>2. 请给出你认为的变化比例：</p>
+                    <p>
+                        2. 你认为<span id="time-slices-text-1" highlight></span>时间片中的节点距离是<span id="time-slices-text-2" highlight></span>时间片中的多少倍？
+                        <span style="display: block;">输入0-3的数值：</span>
+                    </p>
                     
-                    <input type="number" name="q2" id="q2-number" value="" min=1 max=500 oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
-                    <label for="q2-number">%</label>
-                    <p class="hint">范围：整数，(0, 500]</p>
+                    <input type="number" name="q2" id="q2-number" value="" min=0.1 max=3 step=0.1 required>
+                    <p class="hint">范围：(0.0, 3.0]</p>
 
                 </div>
 
