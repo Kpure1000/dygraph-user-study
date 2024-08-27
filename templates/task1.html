@@ -60,11 +60,12 @@
 
                     <p>
                         2. 你认为<span id="time-slices-text-1" highlight></span>时间片中的节点距离是<span id="time-slices-text-2" highlight></span>时间片中的多少倍？
-                        <span style="display: block;">输入0-3的数值：</span>
+                        <span style="display: block;">请输入数值：</span>
                     </p>
                     
-                    <input type="number" name="q2" id="q2-number" value="" min=0.1 max=3 step=0.1 required>
-                    <p class="hint">范围：(0.0, 3.0]</p>
+                    <input type="number" name="q2" id="q2-number" value="" step=0.01 required>
+                    <p id="increase-hint" class="hint">范围：(0.0, 1.0)</p>
+                    <p id="decrease-hint" class="hint">范围：(1.0, 5.0]</p>
 
                 </div>
 

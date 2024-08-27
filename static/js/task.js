@@ -5,16 +5,28 @@ function add_radio_listener() {
 
         let q2_container = $('#q2-container');
         
+        let q2_number = $('#q2-number');
+        let q2_number_hint_increase = $('#increase-hint');
+        let q2_number_hint_decrease = $('#decrease-hint');
+        
         if (q1 != null) {
             let q2_input = q2_container.find('input[type=number]')
             switch (q1) {
                 case 'increase':
                     q2_container.slideDown({duration: 200});
                     q2_input.prop('required', true);
+                    q2_number.prop('min', 0.01);
+                    q2_number.prop('max', 0.99);
+                    q2_number_hint_increase.slideDown({duration: 200});
+                    q2_number_hint_decrease.slideUp({duration: 200});
                     break;
                 case 'decrease':
                     q2_container.slideDown({duration: 200});
                     q2_input.prop('required', true);
+                    q2_number.prop('min', 1.01);
+                    q2_number.prop('max', 5.00);
+                    q2_number_hint_increase.slideUp({duration: 200});
+                    q2_number_hint_decrease.slideDown({duration: 200});
                     break;
                 case 'none':
                     q2_container.slideUp({duration: 200, });
