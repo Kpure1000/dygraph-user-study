@@ -14,17 +14,21 @@ circle {
     stroke-width: 1.5;
     stroke-opacity: 0.9;
     /* fill: #69a2d0; */
-    fill: #aabfce;
+    fill: #94bddb;
     r: 3.5;
 }
 circle.highlight {
     fill: #ff4f4f !important;
-    /* r: 4.5; */
+    r: 5 !important;
 }
 circle.hover_highlight {
     /* fill: #5cc32d; */
-    fill: #b0d0e7;
-    r: 4.5;
+    /* fill: #b0d0e7; */
+    fill: #ff4f4f;
+    r: 4;
+}
+circle.not_allowed {
+    fill: #b8b8b8 !important;
 }
 
 .hull {

@@ -37,39 +37,15 @@
             <form action="/next-task" method="post">
                 <div class="q-container">
 
-                    <p>1. 在给定的高亮时间片<span id="time-slices-text" highlight></span>中，观察两个<span highlight>高亮</span>节点，判断两点间距离的变化，在以下三个选项中选择一个：</p>
+                    <p>1. 在给定的高亮时间片<span id="time-slices-text" highlight></span>中，寻找位置变化最大的<span public>公共</span>节点，使用光标点击选中该节点，确认后点击下一步。</p>
                     
-                    <div id="r-group" style="margin-bottom: 20px;">
-                        <div style="margin-top: 10px;">
-                            <input type="radio" id="radio-increase" name="answer" value="increase" required />
-                            <label for="radio-increase">变短</label>
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <input type="radio" id="radio-decrease" name="answer" value="decrease" />
-                            <label for="radio-decrease">变长</label>
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <input type="radio" id="radio-none" name="answer" value="none" />
-                            <label for="radio-none">不变</label>
-                        </div>
-                    </div>
+                    <p>当前选中节点ID: <span id="selected_id" name="answer" highlight>-</span></p>
+                    
+                    <input type="hidden" id="selected_id_answer" name="answer"/>
 
                 </div>
                 
-                <div id="q2-container" class="q-container">
-
-                    <p>
-                        2. 你认为<span id="time-slices-text-1" highlight></span>时间片中的节点距离是<span id="time-slices-text-2" highlight></span>时间片中的多少倍？
-                        <span style="display: block;">请输入数值：</span>
-                    </p>
-                    
-                    <input type="number" name="q2" id="q2-number" value="" step=0.01 required>
-                    <p id="increase-hint" class="hint">范围：(0.0, 1.0)</p>
-                    <p id="decrease-hint" class="hint">范围：(1.0, 5.0]</p>
-
-                </div>
-
-                <input type="submit" value="下一个">
+                <input type="submit" id="submit_button" value="下一个" not_allowed disabled>
             </form>
         </div>
 
@@ -81,4 +57,5 @@
 <script src="../static/js/concave_hull.js"></script>
 <script src="../static/js/vis.js"></script>
 <script src="../static/js/task.js"></script>
+
 </html>

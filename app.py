@@ -154,11 +154,15 @@ def next_task():
         if taskManager is None:
             return redirect(url_for('oops', error="TASK_ERROR"))
         q1 = str(request.form['answer'])
-        q2 = request.form['q2']
-        q2 = float(q2) if q2 != None and q2 != "" else 0
 
         method, dataset = taskManager.current_task_info()
         finish_time = taskManager.end_task()
+
+        if taskManager.current_task_type() == 2:
+            q2 = request.form['q2']
+            q2 = float(q2) if q2 != None and q2 != "" else 0
+        else:
+            q2 = None
 
         new_result = { "method": method, "dataset": dataset, "q1": q1, "q2": q2, "finish_time": finish_time }
 

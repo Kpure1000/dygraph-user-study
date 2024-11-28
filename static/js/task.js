@@ -1,3 +1,5 @@
+var SELECT_NODE_EVENT = 'select_node';
+var UNSELECT_NODE_EVENT = 'unselect_node';
 
 function add_radio_listener() {
     $('#r-group').find('input[type=radio]').change(function() {
@@ -40,10 +42,24 @@ function add_radio_listener() {
     })
 }
 
+function add_selected_listener() {
+    
+    document.addEventListener(SELECT_NODE_EVENT, function (event) {
+        const { id } = event.detail;
+        $('#selected_id').text("" + id)
+        $('#selected_id_answer').val(id)
+        $('#submit_button').prop('disabled', false)
+    })
+
+    document.addEventListener(UNSELECT_NODE_EVENT, function (event) {
+        $('#selected_id').text("-")
+        $('#selected_id_answer').val("")
+        $('#submit_button').prop('disabled', true)
+    })
+}
+
 $(document).ready(function() {
     
-    add_radio_listener();
-
     $.ajax({
         url: '/get-data',
         type: 'GET',
@@ -75,9 +91,13 @@ function start_task(data) {
             if (task_type === 1) {
                 hl_nodes = vis_data["highlight-nodes"]
                 hl_slices = vis_data["highlight-slices"]
+
+                add_selected_listener();
             } else {
                 hl_groups = vis_data["highlight-groups"]
                 hl_slices = vis_data["highlight-slices"]
+
+                add_radio_listener();
             }
             
             hl_slices = hl_slices.sort((a, b) => a - b)
@@ -98,6 +118,16 @@ function start_task(data) {
             
             let total_nodes = []
             
+            // 高亮时间片中共有的节点
+            let intersected_nodes = data_slices[hl_slices.values().next().value].nodes.map(node => node.id) 
+
+            hl_slices.forEach(slice => {
+                slice_nodes = data_slices[slice].nodes.map(node => node.id)
+                intersected_nodes = intersected_nodes.filter(v => slice_nodes.includes(v))
+            });
+
+            intersected_nodes = new Set(intersected_nodes)
+
             for (let i = 0; i < data_slices.length; i++) {
                 total_nodes.push(data_slices[i].nodes)
                 highlight = hl_slices.has(i) ? "highlight" : ""
@@ -113,7 +143,8 @@ function start_task(data) {
             for (let i = 0; i < data_slices.length; i++) {
                 if (cur_method === "incremental")
                     node_extand = local_normalize(data_slices[i].nodes);
-                fixed_layout(`slice${i + 1}`, data_slices[i], node_extand.min, node_extand.max, hl_nodes, hl_groups)
+                is_highlight = hl_slices.has(i)
+                fixed_layout(`slice${i + 1}`, data_slices[i], node_extand.min, node_extand.max, hl_nodes, hl_groups, is_highlight, intersected_nodes)
             }
             
         },

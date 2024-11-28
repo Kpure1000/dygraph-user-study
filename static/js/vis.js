@@ -1,5 +1,5 @@
 
-function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
+function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups, is_highlight_slice, intersected_nodes) {
 
     let svg = d3.select('#' + svg_id)
 
@@ -42,14 +42,14 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
         .selectAll("circle")
 
         
-    link = link
-        .data(links)
-        .enter()
-        .append("line")
-        .attr("x1", d => xScale(id2node.get(d.source).x))
-        .attr("y1", d => yScale(id2node.get(d.source).y))
-        .attr("x2", d => xScale(id2node.get(d.target).x))
-        .attr("y2", d => yScale(id2node.get(d.target).y))
+    // link = link
+    //     .data(links)
+    //     .enter()
+    //     .append("line")
+    //     .attr("x1", d => xScale(id2node.get(d.source).x))
+    //     .attr("y1", d => yScale(id2node.get(d.source).y))
+    //     .attr("x2", d => xScale(id2node.get(d.target).x))
+    //     .attr("y2", d => yScale(id2node.get(d.target).y))
 
     node = node
         .data(nodes)
@@ -57,11 +57,13 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
         .append("circle")
         .attr("cx", d => xScale(d.x))
         .attr("cy", d => yScale(d.y))
+        .classed('not_allowed', d => is_highlight_slice ? !intersected_nodes.has(d.id) : true)
+        .attr("cursor", d => is_highlight_slice ? intersected_nodes.has(d.id) ? "pointer" : "not-allowed" : "auto")
         .call(node => node.append("title").text(d => `${d.id}` + (d.group != undefined ? `[${d.group}]` : "")))
 
     if (hl_nodes_map) {
-        node_link_container.selectAll("circle").filter(d => hl_nodes_map.has(d.id)).classed('highlight', true)
-        node_link_container.selectAll("circle").sort((d => hl_nodes_map.has(d.id) ? 1 : -1))
+        // node_link_container.selectAll("circle").filter(d => hl_nodes_map.has(d.id)).classed('highlight', true)
+        // node_link_container.selectAll("circle").sort((d => hl_nodes_map.has(d.id) ? 1 : -1))
     }
     
     if (hl_groups_map) {
@@ -116,58 +118,85 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
 
     }
 
-    node_link_container.selectAll("circle")
-        .on("mouseover", function(event, d) {
-            if (d.selected == undefined || d.selected == false) {
-                highlight(d)
-                d.selected = false
-            }
-        })
-        .on("mouseout", function(event, d) {
-            if (d.selected == undefined || d.selected == false) {
-                unhighlight(d)
-                d.selected = false
-            }
-        })
-        .on("click", function(event, d) {
-            send_clear_highlight_event()
-            send_highlight_event(d.id)
-        })
+    if (is_highlight_slice) {
+        node_link_container.selectAll("circle")
+            .filter((d)=>intersected_nodes.has(d.id))
+            .on("mouseover", function(event, d) {
+                if (d.selected == undefined || d.selected == false) {
+                    send_clear_highlight_event(false)
+                    send_highlight_event(d.id, false)
+                }
+            })
+            .on("mouseout", function(event, d) {
+                if (d.selected == undefined || d.selected == false) {
+                    send_clear_highlight_event(false)
+                }
+            })
+            .on("click", function(event, d) {
+                send_clear_highlight_event(true)
+                send_highlight_event(d.id, true)
+            })
     
         svg.on("click", function(event, d) {
-            const clickedElement = event.target;
-            
-            if (clickedElement.tagName != "circle") {
-                send_clear_highlight_event()
-            }
-        })
+                const clickedElement = event.target;
+                
+                if (clickedElement.tagName != "circle") {
+                    send_clear_highlight_event(true)
+                }
+            })
+    }
     
         const HIGHLIGHT_NODE_EVENT = "highlight_node"
         const CLEAR_HIGHLIGHT_EVENT = "clear_highlight"
 
-        function send_highlight_event(id) {
+        function send_highlight_event(id, is_selected) {
             const customEvent = new CustomEvent(HIGHLIGHT_NODE_EVENT, {
-                detail: { nodeID: id }
+                detail: { nodeID: id , selected: is_selected}
             })
             document.dispatchEvent(customEvent)
+
+            if (is_selected) {
+                const selectEvent = new CustomEvent(SELECT_NODE_EVENT, {
+                    detail: {id: id}
+                })
+                document.dispatchEvent(selectEvent)
+            }
+            
         }
 
-        function send_clear_highlight_event() {
-            const customEvent = new CustomEvent(CLEAR_HIGHLIGHT_EVENT)
+        function send_clear_highlight_event(clear_selected) {
+            const customEvent = new CustomEvent(CLEAR_HIGHLIGHT_EVENT, {
+                detail: { clear_selected: clear_selected}
+            })
             document.dispatchEvent(customEvent)
+
+            if (clear_selected) {
+                const unselectEvent = new CustomEvent(UNSELECT_NODE_EVENT)
+                document.dispatchEvent(unselectEvent)
+            }
         }
 
         document.addEventListener(HIGHLIGHT_NODE_EVENT, function (event) {
-            const { nodeID } = event.detail;
+            const { nodeID, selected } = event.detail;
             let node_data = id2node.get(nodeID)
             if (node_data != null) {
+                id2node.get(nodeID).selected = selected
                 highlight(id2node.get(nodeID))
-                id2node.get(nodeID).selected = true
             }
         })
 
         document.addEventListener(CLEAR_HIGHLIGHT_EVENT, function (event) {
-            clear_highlight()
+            const { clear_selected } = event.detail;
+            svg.selectAll("circle").each(function(d) {
+                if (d.selected != undefined) {
+                    if (clear_selected) {
+                        unhighlight(d)
+                        d.selected = false
+                    } else if (d.selected == false) {
+                        unhighlight(d)
+                    }
+                }
+            })
         })
 
         function highlight(d) {
@@ -177,17 +206,17 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
                 .append("g")
                 .attr("id", `${svg_id}_new_ele_${d.id}`)
             
-            top_elements
-                .selectAll("g")
-                .data(neighbors_links)
-                .enter()
-                .append("line")
-                .attr("x1", d => xScale(id2node.get(d.source).x))
-                .attr("y1", d => yScale(id2node.get(d.source).y))
-                .attr("x2", d => xScale(id2node.get(d.target).x))
-                .attr("y2", d => yScale(id2node.get(d.target).y))
-                .classed('hover_highlight', true)
-                .style('pointer-events', 'none');
+            // top_elements
+            //     .selectAll("g")
+            //     .data(neighbors_links)
+            //     .enter()
+            //     .append("line")
+            //     .attr("x1", d => xScale(id2node.get(d.source).x))
+            //     .attr("y1", d => yScale(id2node.get(d.source).y))
+            //     .attr("x2", d => xScale(id2node.get(d.target).x))
+            //     .attr("y2", d => yScale(id2node.get(d.target).y))
+            //     .classed('hover_highlight', true)
+            //     .style('pointer-events', 'none');
                 
             top_elements
                 .selectAll("g")
@@ -196,7 +225,7 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
                 .append("circle")
                 .attr("cx", d => xScale(d.x))
                 .attr("cy", d => yScale(d.y))
-                .classed('highlight', hl_nodes_map != null && hl_nodes_map.has(d.id))
+                .classed('highlight', d.selected) //hl_nodes_map != null && hl_nodes_map.has(d.id))
                 .classed('hover_highlight', true)
                 .style('pointer-events', 'none');
         }
@@ -205,12 +234,4 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups) {
             node_link_container.selectAll(`g#${svg_id}_new_ele_${d.id}`).remove();
         }
 
-        function clear_highlight() {
-            svg.selectAll("circle").each(function(d) {
-                if (d.selected != undefined || d.selected == true) {
-                    unhighlight(d)
-                    d.selected = false
-                }
-            })
-        }
 }
