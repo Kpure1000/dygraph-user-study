@@ -37,11 +37,26 @@
             <form action="/next-task" method="post">
                 <div class="q-container">
 
-                    <p>1. 在给定的高亮时间片<span id="time-slices-text" highlight></span>中，寻找位置变化最大的<span public>公共</span>节点，使用光标点击选中该节点，确认后点击下一步。</p>
+                    <p>1. 在给定的高亮时间片<span id="time-slices-text" highlight></span>中，寻找位置变化较大的的三个<span public>公共</span>节点，使用光标点击选中该节点，确认后点击下一步。</p>
                     
-                    <p>当前选中节点ID: <span id="selected_id" name="answer" highlight>-</span></p>
-                    
-                    <input type="hidden" id="selected_id_answer" name="answer"/>
+                    <div id="r-group" style="margin-bottom: 20px;">
+                        <div style="margin-top: 10px;">
+                            <input type="radio" id="radio-top1" name="_top_answer" value="top1" checked required />
+                            <label for="radio-top1">1: <span highlight></span></label>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <input type="radio" id="radio-top2" name="_top_answer" value="top2" />
+                            <label for="radio-top2">2: <span highlight></span></label>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <input type="radio" id="radio-top3" name="_top_answer" value="top3" />
+                            <label for="radio-top3">3: <span highlight></span></label>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="top1_answer" name="top1-answer"/>
+                    <input type="hidden" id="top2_answer" name="top2-answer"/>
+                    <input type="hidden" id="top3_answer" name="top3-answer"/>
 
                 </div>
                 

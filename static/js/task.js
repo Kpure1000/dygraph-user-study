@@ -1,5 +1,7 @@
 var SELECT_NODE_EVENT = 'select_node';
 var UNSELECT_NODE_EVENT = 'unselect_node';
+var TAG_NODE_EVENT = 'tag_node';
+var UNTAG_NODE_EVENT = 'untag_node';
 
 function add_radio_listener() {
     $('#r-group').find('input[type=radio]').change(function() {
@@ -42,19 +44,108 @@ function add_radio_listener() {
     })
 }
 
+var selected_set = [NaN, NaN, NaN]
+
 function add_selected_listener() {
     
     document.addEventListener(SELECT_NODE_EVENT, function (event) {
         const { id } = event.detail;
-        $('#selected_id').text("" + id)
-        $('#selected_id_answer').val(id)
-        $('#submit_button').prop('disabled', false)
+
+        let top_radio = $('#r-group').find('input[type=radio]:checked')
+        let top_num = top_radio.val()
+
+        if (selected_set.includes(id)) {
+            alert("请勿重复选择节点")
+        } 
+        else if (top_num != null) {
+
+            $(`label[for=${top_radio.attr('id')}]`).find('span').text(id)
+
+            top_radio.find('span').val("" + id)
+            let tagNodeEvent = null
+            switch (top_num) {
+                case 'top1':
+                    $('#top1_answer').val(id)
+                    selected_set[0] = id
+                    tagNodeEvent = new CustomEvent(TAG_NODE_EVENT, {
+                        detail: {tagID: 1, nodeID: id}
+                    })
+                    break;
+                case 'top2':
+                    // TODO
+                    $('#top2_answer').val(id)
+                    selected_set[1] = id
+                    tagNodeEvent = new CustomEvent(TAG_NODE_EVENT, {
+                        detail: {tagID: 2, nodeID: id}
+                    })
+                    break;
+                case 'top3':
+                    // TODO
+                    $('#top3_answer').val(id)
+                    selected_set[2] = id
+                    tagNodeEvent = new CustomEvent(TAG_NODE_EVENT, {
+                        detail: {tagID: 3, nodeID: id}
+                    })
+                    break;
+                default:
+                    break;
+            }
+            
+            tagNodeEvent ? document.dispatchEvent(tagNodeEvent) : null
+
+            if ($('#top1_answer').val() != '' && $('#top2_answer').val() != '' && $('#top3_answer').val() != '') {
+                $('#submit_button').prop('disabled', false)
+            }
+        }
+        else {
+            alert("请先在右侧top列表中选中一个元素")
+        }
+
     })
 
     document.addEventListener(UNSELECT_NODE_EVENT, function (event) {
-        $('#selected_id').text("-")
-        $('#selected_id_answer').val("")
-        $('#submit_button').prop('disabled', true)
+        
+        let top_radio = $('#r-group').find('input[type=radio]:checked')
+        let top_num = top_radio.val()
+
+        if (top_num != null) {
+            $(`label[for=${top_radio.attr('id')}]`).find('span').text("")
+            tagID = NaN
+            nodeID = NaN
+            switch (top_num) {
+                case 'top1':
+                    tagID = 1
+                    nodeID = selected_set[0]
+                    $('#top1_answer').val('')
+                    selected_set[0] = NaN
+                    break;
+                case 'top2':
+                    tagID = 2
+                    nodeID = selected_set[1]
+                    $('#top2_answer').val('')
+                    selected_set[1] = NaN
+                    break;
+                case 'top3':
+                    tagID = 3
+                    nodeID = selected_set[2]
+                    $('#top3_answer').val('')
+                    selected_set[2] = NaN
+                    break;
+                default:
+                    break;
+            }
+
+            if (!isNaN(tagID) && !isNaN(nodeID)) {
+                tagNodeEvent = new CustomEvent(UNTAG_NODE_EVENT, {
+                    detail: {tagID: tagID, nodeID: nodeID}
+                })
+                document.dispatchEvent(tagNodeEvent)
+            }
+
+            $('#submit_button').prop('disabled', true)
+
+        }
+
     })
 }
 
@@ -89,7 +180,7 @@ function start_task(data) {
             let hl_nodes = null
             let hl_groups = null
             if (task_type === 1) {
-                hl_nodes = vis_data["highlight-nodes"]
+                // hl_nodes = vis_data["highlight-nodes"]
                 hl_slices = vis_data["highlight-slices"]
 
                 add_selected_listener();

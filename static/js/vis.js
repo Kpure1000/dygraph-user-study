@@ -35,6 +35,9 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups, is_highlight_
     let node_link_container = svg.append("g")
     node_link_container.attr("id", `${svg_id}_node_link_container`)
 
+    let node_tag_container = svg.append("g")
+    node_tag_container.attr("id", `${svg_id}_tag_container`)
+
     let link = node_link_container.append("g").attr("id", `${svg_id}_link_container`)
         .selectAll("line")
 
@@ -198,6 +201,47 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups, is_highlight_
                 }
             })
         })
+
+        document.addEventListener(TAG_NODE_EVENT, function (event) {
+            const { tagID, nodeID } = event.detail;
+            let node_data = id2node.get(nodeID)
+            if (node_data != null) {
+                showNodeTag(tagID, node_data)
+            }
+        })
+
+        document.addEventListener(UNTAG_NODE_EVENT, function (event) {
+            const { tagID, nodeID } = event.detail;
+            let node_data = id2node.get(nodeID)
+            if (node_data != null) {
+                removeNodeTag(tagID)
+            }
+        })
+
+        function showNodeTag(tagID, d) {
+
+            console.log('show tag', tagID, d.id)
+
+            let top_tag = node_tag_container
+                    .append("g")
+                    .attr("id", `${svg_id}_new_ele_${tagID}`)
+                
+            top_tag.selectAll("g")
+                .data([d])
+                .enter()
+                .append("text")
+                .attr("x", d => xScale(d.x))
+                .attr("y", d => yScale(d.y))
+                .text(tagID)
+                .style('pointer-events', 'none');
+        }
+
+        function removeNodeTag(tagID) {
+
+            console.log('remove tag', tagID)
+
+            node_tag_container.select(`#${svg_id}_new_ele_${tagID}`).remove()
+        }
 
         function highlight(d) {
             neighbors_links = node2edge.get(d.id)
