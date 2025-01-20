@@ -14,25 +14,26 @@ def pairwise(root, data_name):
     flist = glob(f'{root}/{data_name}/*.json')
     for f in flist:
         base = os.path.splitext(os.path.basename(f))[0]
-        method_name = METHOD[int(base.split('_')[1])]
+        method_name = METHOD[int(base)]
         data = {}
         with open(f, 'r', encoding='utf-8') as fin:
             org_data = json.loads(fin.read())
-            data['highlight-slices'] = [slice_id - 1 for slice_id in org_data['highlight-slices']]
-            data['highlight-nodes']  = org_data['highlight-points'][0]
+            data['highlight-slices'] = [slice_id for slice_id in org_data['highlight-slices']]
             data['timeslices'] = []
             timeslices = org_data['timeslices']
-            for timeslice in timeslices:
+            id_lists = org_data['id_list']
+            for ti, timeslice in enumerate(timeslices):
+                id_list = id_lists[ti]
                 node_id   = timeslice['nodes']
                 links_org = timeslice['links']
                 node_pos  = timeslice['positions']
                 # regenerate nodes
                 nodes = []
                 links = []
-                for id in node_id:
-                    [x, y] = node_pos[str(id)]
+                for id_idx, pos in node_pos.items():
+                    [x, y] = pos
                     nodes.append({
-                        'id': id,
+                        'id': int(id_idx),
                         'x': x,
                         'y': y,
                         'group': 0
@@ -111,14 +112,14 @@ if __name__ == '__main__':
     os.makedirs('data/node', exist_ok=True)
 
     pairwise('data/pair-wise', 'ambassador')
-    pairwise('data/pair-wise', 'newcomb')
-    pairwise('data/pair-wise', 'syn0')
-    pairwise('data/pair-wise', 'syn1')
+    pairwise('data/pair-wise', 'newfratw')
+    pairwise('data/pair-wise', 'syn_0')
+    pairwise('data/pair-wise', 'syn_1')
     
-    os.makedirs('data/cluster', exist_ok=True)
+    # os.makedirs('data/cluster', exist_ok=True)
 
-    cluster('data/cluster_pairwise', 'clu0')
-    # cluster('data/cluster_pairwise', 'clu1')
-    cluster('data/cluster_pairwise', 'clu2')
-    cluster('data/cluster_pairwise', 'clu3')
-    cluster('data/cluster_pairwise', 'clu4')
+    # cluster('data/cluster_pairwise', 'clu0')
+    # # cluster('data/cluster_pairwise', 'clu1')
+    # cluster('data/cluster_pairwise', 'clu2')
+    # cluster('data/cluster_pairwise', 'clu3')
+    # cluster('data/cluster_pairwise', 'clu4')
