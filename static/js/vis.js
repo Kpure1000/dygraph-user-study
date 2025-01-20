@@ -45,14 +45,14 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups, is_highlight_
         .selectAll("circle")
 
         
-    // link = link
-    //     .data(links)
-    //     .enter()
-    //     .append("line")
-    //     .attr("x1", d => xScale(id2node.get(d.source).x))
-    //     .attr("y1", d => yScale(id2node.get(d.source).y))
-    //     .attr("x2", d => xScale(id2node.get(d.target).x))
-    //     .attr("y2", d => yScale(id2node.get(d.target).y))
+    link = link
+        .data(links)
+        .enter()
+        .append("line")
+        .attr("x1", d => xScale(id2node.get(d.source).x))
+        .attr("y1", d => yScale(id2node.get(d.source).y))
+        .attr("x2", d => xScale(id2node.get(d.target).x))
+        .attr("y2", d => yScale(id2node.get(d.target).y))
 
     node = node
         .data(nodes)
@@ -250,17 +250,17 @@ function fixed_layout(svg_id, data, min, max, hl_nodes, hl_groups, is_highlight_
                 .append("g")
                 .attr("id", `${svg_id}_new_ele_${d.id}`)
             
-            // top_elements
-            //     .selectAll("g")
-            //     .data(neighbors_links)
-            //     .enter()
-            //     .append("line")
-            //     .attr("x1", d => xScale(id2node.get(d.source).x))
-            //     .attr("y1", d => yScale(id2node.get(d.source).y))
-            //     .attr("x2", d => xScale(id2node.get(d.target).x))
-            //     .attr("y2", d => yScale(id2node.get(d.target).y))
-            //     .classed('hover_highlight', true)
-            //     .style('pointer-events', 'none');
+            top_elements
+                .selectAll("g")
+                .data(neighbors_links)
+                .enter()
+                .append("line")
+                .attr("x1", d => xScale(id2node.get(d.source).x))
+                .attr("y1", d => yScale(id2node.get(d.source).y))
+                .attr("x2", d => xScale(id2node.get(d.target).x))
+                .attr("y2", d => yScale(id2node.get(d.target).y))
+                .classed('hover_highlight', true)
+                .style('pointer-events', 'none');
                 
             top_elements
                 .selectAll("g")
