@@ -3,6 +3,20 @@ var UNSELECT_NODE_EVENT = 'unselect_node';
 var TAG_NODE_EVENT = 'tag_node';
 var UNTAG_NODE_EVENT = 'untag_node';
 
+function add_keyshot_listener() {
+    // 监听`keydown`事件
+    document.addEventListener("keydown", function (event) {
+        // 判断按下的键是否是回车键（键码为13）
+        if (event.key === "1") {
+            $('#radio-top1').prop("checked", true)
+        } else if (event.key === "2") {
+            $('#radio-top2').prop("checked", true)
+        } else if (event.key === "3") {
+            $('#radio-top3').prop("checked", true)
+        }
+    });
+}
+
 function add_radio_listener() {
     $('#r-group').find('input[type=radio]').change(function() {
         let q1 = $('#r-group').find('input[type=radio]:checked').val();
@@ -183,6 +197,8 @@ function start_task(data) {
                 // hl_nodes = vis_data["highlight-nodes"]
                 hl_slices = vis_data["highlight-slices"]
 
+                add_keyshot_listener();
+                
                 add_selected_listener();
             } else {
                 hl_groups = vis_data["highlight-groups"]

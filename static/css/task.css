@@ -23,6 +23,10 @@ body, html {
 
     border-color: #ff4f4f !important;
 }
+.container [hint] {
+    color: #676767 !important;
+    font-size: small;
+}
 .container [public] {
     color: #59a6de;
     font-weight: bold;
